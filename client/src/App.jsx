@@ -1,13 +1,24 @@
-import React from 'react';
-import './App.css';
-import ATMWithdrawal from './ATMWithdrawal';
+import React, { useState } from 'react';
+import AccountSelection from './AccountSelection';
+import Withdrawal from './Withdrawal';
+import './styles/App.css';
 
-function App() {
+const App = () => {
+  const [currentPage, setCurrentPage] = useState('accountSelection');
+
+  const handlePageChange = () => {
+    setCurrentPage('withdrawal');
+  };
+
   return (
-    <div className="App">
-      <ATMWithdrawal />
+    <div className="app-container">
+      {currentPage === 'accountSelection' ? (
+        <AccountSelection onProceed={handlePageChange} />
+      ) : (
+        <Withdrawal />
+      )}
     </div>
   );
-}
+};
 
 export default App;

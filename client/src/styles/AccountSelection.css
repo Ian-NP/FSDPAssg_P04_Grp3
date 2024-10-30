@@ -1,0 +1,10 @@
+.account-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+  }
+  
+  .account-button {
+    width: 250px;
+  }
+  

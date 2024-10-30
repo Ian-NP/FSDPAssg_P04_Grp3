@@ -1,0 +1,33 @@
+.atm-button {
+    background-color: #333;
+    color: white;
+    border: none;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  /* small button style */
+  .atm-button.small {
+    padding: 10px 20px;
+    height: 40px;
+  }
+  
+  /* medium button style  */
+  .atm-button.medium {
+    padding: 15px 30px;
+    height: 50px;
+  }
+  
+  /* large button style */
+  .atm-button.large {
+    padding: 20px 40px; 
+    height: 100px; 
+    font-size: 18px; 
+    width: 290px; 
+  }
+  
+  .atm-button:hover {
+    background-color: #555;
+  }
