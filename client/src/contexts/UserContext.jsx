@@ -5,7 +5,7 @@ import axios from 'axios';
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState({});
 
   const fetchAndSetUserData = async (userId) => {
     try {
@@ -28,7 +28,7 @@ export const UserProvider = ({ children }) => {
   };
 
   return (
-    <UserContext.Provider value={{ user, fetchAndSetUserData, logout }}>
+    <UserContext.Provider value={{ user, fetchAndSetUserData, logout, setUser }}>
       {children}
     </UserContext.Provider>
   );

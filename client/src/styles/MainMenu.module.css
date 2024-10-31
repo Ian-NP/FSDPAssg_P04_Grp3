@@ -1,7 +1,10 @@
 .mainMenuContainer{
     height: 100%;
-    width: 100%;
-    padding-left: 70px;
+    width: calc(100% - 60px);
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
 }
 
 .mainMenuHeader{
@@ -12,8 +15,16 @@
 }
 
 .mainMenuHeader p{
-    font-size: 2.5rem;
+    font-size: 2rem;
     font-weight: 600;
     margin: 0;
     padding: 0;
 }
+
+.mainMenuOptionsContainer{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 2rem;
+    width: 100%;
+}
+

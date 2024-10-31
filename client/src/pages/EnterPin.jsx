@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAccount } from '../contexts/AccountContext';
 import { useUser } from '../contexts/UserContext';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
+import Loading from './Loading';
 import styles from '../styles/EnterPin.module.css';
 
 const EnterPin = ({ accountId }) => {
@@ -11,6 +12,7 @@ const EnterPin = ({ accountId }) => {
     const [pin, setPin] = useState(['', '', '', '', '', '']);
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
+    const firstInputRef = useRef(null); // Create a ref for the first input
 
     useEffect(() => {
         const handleGlobalKeyDown = (e) => {
@@ -85,14 +87,14 @@ const EnterPin = ({ accountId }) => {
         console.log("Fetching user data...");
 
         setIsLoading(true);
-        navigate('/main-menu'); // Navigate to the main menu while fetching data
+        navigate('/mainMenu'); // Navigate to the main menu while fetching data
         const fullPin = pin.join(''); // Join the array to form the complete PIN
         const accountData = await login(accountId, fullPin);
 
         if (accountData) {
             const isUserDataFetched = await fetchAndSetUserData(accountData.userId);
             if (isUserDataFetched) {
-                navigate('/main-menu');
+                navigate('/mainMenu');
             } else {
                 alert('Error fetching user data. Please try again.');
             }
@@ -104,31 +106,42 @@ const EnterPin = ({ accountId }) => {
         setIsLoading(false);
     };
 
+    // Auto-focus on the first input when not loading
+    useEffect(() => {
+        if (!isLoading && firstInputRef.current) {
+            firstInputRef.current.focus();
+        }
+    }, [isLoading]); // Focus on the first input when isLoading changes
+
     return (
-        <Layout>
-            <div className={styles.pinInputContent}>
-                <h2>Welcome</h2>
-                <p>Please enter your PIN</p>
-                <form onSubmit={handleSubmit} className={styles.pinForm}>
-                    {pin.map((_, index) => (
-                        <input
-                            key={index}
-                            type="password" // Change to password type to show asterisks
-                            name={`pin-${index}`}
-                            value={pin[index]}
-                            onChange={(e) => handleChange(e, index)}
-                            onKeyDown={(e) => handleKeyDown(e, index)}
-                            placeholder="" // Set placeholder to empty
-                            maxLength="1" // Limit to one character
-                            className={styles.pinBox}
-                        />
-                    ))}
-                </form>
-                {pinError && <p>{pinError}</p>}
-                {error && <p>{error}</p>}
-                {isLoading && <p>Loading...</p>}
-            </div>
-        </Layout>
+        isLoading ? (
+            <Loading />
+        ) : (
+            <Layout>
+                <div className={styles.pinInputContent}>
+                    <h2>Welcome</h2>
+                    <p>Please enter your PIN</p>
+                    <form onSubmit={handleSubmit} className={styles.pinForm}>
+                        {pin.map((_, index) => (
+                            <input
+                                key={index}
+                                type="password" // Change to password type to show asterisks
+                                name={`pin-${index}`}
+                                value={pin[index]}
+                                onChange={(e) => handleChange(e, index)}
+                                onKeyDown={(e) => handleKeyDown(e, index)}
+                                placeholder="" // Set placeholder to empty
+                                maxLength="1" // Limit to one character
+                                className={styles.pinBox}
+                                ref={index === 0 ? firstInputRef : null} // Set ref only for the first input
+                            />
+                        ))}
+                    </form>
+                    {pinError && <p>{pinError}</p>}
+                    {error && <p>{error}</p>}
+                </div>
+            </Layout>
+        )
     );
 };
 
