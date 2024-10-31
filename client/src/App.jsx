@@ -7,6 +7,7 @@ import MainMenu from './pages/MainMenu';
 import AccountSelection from './pages/AccountSelection';
 import Withdrawal from './pages/Withdrawal';
 import Loading from "./pages/Loading";
+import ReceiptChoice from './pages/ReceiptChoice';
 import './styles/App.css';
 
 const App = () => {
@@ -19,6 +20,7 @@ const App = () => {
         <Route path="/loading" element={<Loading />} />
         <Route path="/accountSelection" element={<AccountSelection />} />
         <Route path="/withdrawal" element={<Withdrawal />} />
+        <Route path="/receiptChoice" element={<ReceiptChoice />} />
       </Routes>
     </>
   );
