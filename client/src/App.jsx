@@ -1,23 +1,23 @@
-import React, { useState } from 'react';
-import AccountSelection from './AccountSelection';
-import Withdrawal from './Withdrawal';
+// App.jsx
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+import InsertCard from './pages/InsertCard';
+import EnterPin from './pages/EnterPin';
+import AccountSelection from './pages/AccountSelection';
+import Withdrawal from './pages/Withdrawal';
+// import MainMenu from './pages/MainMenu';
 import './styles/App.css';
 
 const App = () => {
-  const [currentPage, setCurrentPage] = useState('accountSelection');
-
-  const handlePageChange = () => {
-    setCurrentPage('withdrawal');
-  };
-
   return (
-    <div className="app-container">
-      {currentPage === 'accountSelection' ? (
-        <AccountSelection onProceed={handlePageChange} />
-      ) : (
-        <Withdrawal />
-      )}
-    </div>
+    <>
+      <Routes>
+        <Route path="/" element={<InsertCard />} />
+        <Route path="/enter-pin" element={<EnterPin />} />
+        <Route path="/accountSelection" element={<AccountSelection />} />
+        <Route path="/withdrawal" element={<Withdrawal />} />
+      </Routes>
+    </>
   );
 };
 

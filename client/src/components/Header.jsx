@@ -1,7 +1,7 @@
 import React from 'react';
-import OCBClogo from './assets/OCBClogo.png';
-import exit from './assets/exit.png';
-import './styles/Header.css';
+import OCBClogo from '../assets/OCBClogo.png';
+import exit from '../assets/exit.png';
+import '../styles/Header.css';
 
 const Header = ({ onExit }) => {
   return (

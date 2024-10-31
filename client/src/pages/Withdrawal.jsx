@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import Header from './Header';
-import Button from './Button';
-import './styles/Common.css';
-import './styles/Withdrawal.css';
+import Header from '../components/Header';
+import Button from '../components/Button';
+import '../styles/Common.css';
+import '../styles/Withdrawal.css';
 
 const Withdrawal = () => {
   const [amount, setAmount] = useState("0.00");
