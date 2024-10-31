@@ -5,7 +5,6 @@ import InsertCard from './pages/InsertCard';
 import EnterPin from './pages/EnterPin';
 import AccountSelection from './pages/AccountSelection';
 import Withdrawal from './pages/Withdrawal';
-// import MainMenu from './pages/MainMenu';
 import './styles/App.css';
 
 const App = () => {

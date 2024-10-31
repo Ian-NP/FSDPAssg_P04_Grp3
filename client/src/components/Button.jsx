@@ -1,9 +1,9 @@
 import React from 'react';
-import '../styles/Button.css';
+import styles from '../styles/Button.module.css';
 
 const Button = ({ label, onClick, size = 'medium' }) => {
   return (
-    <button className={`atm-button ${size}`} onClick={onClick}>
+    <button className={`${styles['atm-button']} ${styles[size]}`} onClick={onClick}>
       {label}
     </button>
   );

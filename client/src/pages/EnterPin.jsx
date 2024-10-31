@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAccount } from '../contexts/AccountContext';
 import { useUser } from '../contexts/UserContext';
 import { useNavigate } from 'react-router-dom';
+import Layout from '../components/Layout';
 
 const EnterPin = ({ accountId }) => {
     const { login, pinError } = useAccount();
@@ -42,19 +43,23 @@ const EnterPin = ({ accountId }) => {
     };
   
     return (
-      <form onSubmit={handleSubmit}>
-        <input
-          type="password"
-          value={pin}
-          onChange={(e) => setPin(e.target.value)}
-          placeholder="Enter your PIN"
-          required
-        />
-        <button type="submit">Submit</button>
-        {pinError && <p>{pinError}</p>} {/* Display PIN error if any */}
-        {error && <p>{error}</p>} {/* Display loading error if any */}
-        {isLoading && <p>Loading...</p>} {/* Show loading message */}
-      </form>
+      <>
+        <Layout>
+          <form onSubmit={handleSubmit}>
+            <input
+              type="password"
+              value={pin}
+              onChange={(e) => setPin(e.target.value)}
+              placeholder="Enter your PIN"
+              required
+            />
+            <button type="submit">Submit</button>
+          </form>
+          {pinError && <p>{pinError}</p>} {/* Display PIN error if any */}
+          {error && <p>{error}</p>} {/* Display loading error if any */}
+          {isLoading && <p>Loading...</p>} {/* Show loading message */}
+        </Layout>
+      </>
     );
   };
 
