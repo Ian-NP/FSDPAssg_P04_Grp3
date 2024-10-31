@@ -35,9 +35,9 @@ const Withdrawal = () => {
   };
 
   return (
-    <div className={styles['atm-container']}>
+    <div className='atm-container'>
       <Header />
-      <main className={styles['atm-main']}>
+      <main className='atm-main'>
         <h2>Please enter amount in multiples of $10 or $50</h2>
         <div className={styles['input-container']}>
           <span className={styles['currency-symbol']}>$</span>
@@ -51,7 +51,7 @@ const Withdrawal = () => {
             onChange={(e) => setAmount(e.target.value)}
           />
         </div>
-        <div className={styles['button-container']}>
+        <div className='button-container'>
           <Button label="Clear" onClick={handleClear} />
           <Button label="Confirm" onClick={handleConfirm} />
         </div>

@@ -1,66 +1,135 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAccount } from '../contexts/AccountContext';
 import { useUser } from '../contexts/UserContext';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
+import styles from '../styles/EnterPin.module.css';
 
 const EnterPin = ({ accountId }) => {
     const { login, pinError } = useAccount();
-    const { fetchAndSetUserData, error } = useUser(); // Get fetch function and error state
-    const [pin, setPin] = useState('');
-    const [isLoading, setIsLoading] = useState(false); // Local loading state
+    const { fetchAndSetUserData, error } = useUser();
+    const [pin, setPin] = useState(['', '', '', '', '', '']);
+    const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
 
-    const navigate = useNavigate(); // Initialize useNavigate
-  
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-      setIsLoading(true); // Set loading to true at the beginning
+    useEffect(() => {
+        const handleGlobalKeyDown = (e) => {
+            if (e.key === 'Enter') {
+                const isPinComplete = pin.every((digit) => digit !== ''); // Check if all inputs are filled
+                if (isPinComplete) {
+                    handleSubmit(e); // Call handleSubmit if the PIN is complete
+                } else {
+                    console.warn('Please fill in all PIN fields.'); // Optional: Log a warning
+                }
+            }
+        };
 
-      const accountData = await login(accountId, pin);
-  
-      if (accountData) {
-        const isUserDataFetched = await fetchAndSetUserData(accountData.userId);
-        if (isUserDataFetched) {
-          console.log('User data fetched successfully, navigating to the next screen.');
-          navigate('/main-menu'); // Navigate to the next screen
-        } else {
-          // Handle error in fetching user data
-          console.error('Failed to fetch & set user data');
-          alert('Error fetching user data. Please try again.'); // Display user feedback
+        // Add event listener for keydown events
+        document.addEventListener('keydown', handleGlobalKeyDown);
+
+        // Cleanup the event listener on component unmount
+        return () => {
+            document.removeEventListener('keydown', handleGlobalKeyDown);
+        };
+    }, [pin]); // Add pin as a dependency to ensure the latest state is used
+
+    const handleChange = (e, index) => {
+        const value = e.target.value;
+
+        // Allow only numeric input
+        if (/^\d*$/.test(value) && value.length <= 1) {
+            const newPin = [...pin];
+            newPin[index] = value; // Update the specific digit
+            setPin(newPin);
+
+            // Move focus to the next input field if it's not the last one
+            if (value && index < pin.length - 1) {
+                const nextInput = document.querySelector(`input[name="pin-${index + 1}"]`);
+                if (nextInput.value === '') {
+                    nextInput.focus();
+                    // Set cursor to the end of the value
+                    setTimeout(() => {
+                        nextInput.setSelectionRange(nextInput.value.length, nextInput.value.length);
+                    }, 0);
+                }
+            }
         }
-      } else {
-        console.error('Invalid PIN entered');
-        // alert('Invalid PIN. Please try again.'); // Display alert for invalid PIN
-      }
-
-      setPin(''); // Clear the PIN
-  
-      if (error) {
-        alert(`Error: ${error}`); // Display error message from loading state
-      }
-
-      setIsLoading(false); // Set loading to false at the end
     };
-  
-    return (
-      <>
-        <Layout>
-          <form onSubmit={handleSubmit}>
-            <input
-              type="password"
-              value={pin}
-              onChange={(e) => setPin(e.target.value)}
-              placeholder="Enter your PIN"
-              required
-            />
-            <button type="submit">Submit</button>
-          </form>
-          {pinError && <p>{pinError}</p>} {/* Display PIN error if any */}
-          {error && <p>{error}</p>} {/* Display loading error if any */}
-          {isLoading && <p>Loading...</p>} {/* Show loading message */}
-        </Layout>
-      </>
-    );
-  };
 
-export default EnterPin; // Ensure you have this line
+    const handleKeyDown = (e, index) => {
+        if (e.key === 'ArrowRight' && index < pin.length - 1) {
+            const nextInput = document.querySelector(`input[name="pin-${index + 1}"]`);
+            if (nextInput) {
+                nextInput.focus();
+                // Set cursor to the end of the value
+                setTimeout(() => {
+                    nextInput.setSelectionRange(nextInput.value.length, nextInput.value.length);
+                }, 0);
+            }
+        }
+
+        if (e.key === 'ArrowLeft' && index > 0) {
+            const prevInput = document.querySelector(`input[name="pin-${index - 1}"]`);
+            if (prevInput) {
+                prevInput.focus();
+                // Set cursor to the end of the value
+                setTimeout(() => {
+                    prevInput.setSelectionRange(prevInput.value.length, prevInput.value.length);
+                }, 0);
+            }
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        console.log("Fetching user data...");
+
+        setIsLoading(true);
+        navigate('/main-menu'); // Navigate to the main menu while fetching data
+        const fullPin = pin.join(''); // Join the array to form the complete PIN
+        const accountData = await login(accountId, fullPin);
+
+        if (accountData) {
+            const isUserDataFetched = await fetchAndSetUserData(accountData.userId);
+            if (isUserDataFetched) {
+                navigate('/main-menu');
+            } else {
+                alert('Error fetching user data. Please try again.');
+            }
+        } else {
+            console.error('Invalid PIN entered');
+        }
+
+        setPin(['', '', '', '', '', '']); // Clear the PIN
+        setIsLoading(false);
+    };
+
+    return (
+        <Layout>
+            <div className={styles.pinInputContent}>
+                <h2>Welcome</h2>
+                <p>Please enter your PIN</p>
+                <form onSubmit={handleSubmit} className={styles.pinForm}>
+                    {pin.map((_, index) => (
+                        <input
+                            key={index}
+                            type="password" // Change to password type to show asterisks
+                            name={`pin-${index}`}
+                            value={pin[index]}
+                            onChange={(e) => handleChange(e, index)}
+                            onKeyDown={(e) => handleKeyDown(e, index)}
+                            placeholder="" // Set placeholder to empty
+                            maxLength="1" // Limit to one character
+                            className={styles.pinBox}
+                        />
+                    ))}
+                </form>
+                {pinError && <p>{pinError}</p>}
+                {error && <p>{error}</p>}
+                {isLoading && <p>Loading...</p>}
+            </div>
+        </Layout>
+    );
+};
+
+export default EnterPin;

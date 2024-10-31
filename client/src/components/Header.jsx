@@ -8,7 +8,7 @@ const Header = ({ onExit }) => {
     <header className={styles['atm-header']}>
       <img src={OCBClogo} alt="OCBC Logo" className={styles['ocbc-logo']} />
       <div className={styles['header-right']}>
-        <span className={styles['language']}>中文</span>
+        <span className={styles['language']}><b>中文</b></span>
         <div className={styles['header-divider']}></div>
         <button className={styles['exit-container']} onClick={onExit}>
           <img src={exit} alt="Exit" className={styles['exit-icon']} />

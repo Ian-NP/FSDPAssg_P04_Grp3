@@ -14,9 +14,9 @@ const AccountSelection = () => {
   };
 
   return (
-    <div className={styles['atm-container']}>
+    <div className={'atm-container'}>
       <Header />
-      <main className={styles['atm-main']}>
+      <main className='atm-main'>
         <h2>Please select your account type</h2>
         <div className={styles['account-buttons']}>
           <Button label="Accounts with Statements/ Checking Account/ EasiCredit" onClick={onProceed} size="large" />

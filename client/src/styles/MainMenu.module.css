@@ -1,0 +1,19 @@
+.mainMenuContainer{
+    height: 100%;
+    width: 100%;
+    padding-left: 70px;
+}
+
+.mainMenuHeader{
+    display: flex;
+    width: 100%;
+    justify-content: left;
+    flex-direction: column;
+}
+
+.mainMenuHeader p{
+    font-size: 2.5rem;
+    font-weight: 600;
+    margin: 0;
+    padding: 0;
+}

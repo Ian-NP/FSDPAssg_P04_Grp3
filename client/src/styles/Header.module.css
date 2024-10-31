@@ -15,6 +15,7 @@
   .header-right {
     display: flex;
     align-items: center;
+    padding-right: 30px;
   }
   
   .language {
