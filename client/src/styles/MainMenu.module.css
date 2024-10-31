@@ -1,6 +1,6 @@
 .mainMenuContainer{
     height: 100%;
-    width: calc(100% - 60px);
+    width: calc(80% - 60px);
     padding: 30px;
     display: flex;
     flex-direction: column;
@@ -15,7 +15,7 @@
 }
 
 .mainMenuHeader p{
-    font-size: 2rem;
+    font-size: 2.25rem;
     font-weight: 600;
     margin: 0;
     padding: 0;

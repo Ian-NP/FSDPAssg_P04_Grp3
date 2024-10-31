@@ -1,0 +1,32 @@
+.insertCardContainer{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    background-color: #eaeaea;
+    height: 100%;
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.insertCardContainer h1{
+    font-size: 3rem;
+    margin: 0;
+    color: #333;
+}
+
+.title{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+.insertCardContainer p{
+    font-size: 2rem;
+    color: #333;
+    font-weight: bold;
+}

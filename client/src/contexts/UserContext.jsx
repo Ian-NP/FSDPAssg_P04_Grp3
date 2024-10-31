@@ -23,12 +23,12 @@ export const UserProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
+  const LogOutUser = () => {
     setUser(null); // Clear user data on logout
   };
 
   return (
-    <UserContext.Provider value={{ user, fetchAndSetUserData, logout, setUser }}>
+    <UserContext.Provider value={{ user, fetchAndSetUserData, LogOutUser, setUser }}>
       {children}
     </UserContext.Provider>
   );

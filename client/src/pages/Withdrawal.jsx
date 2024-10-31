@@ -44,7 +44,7 @@ const Withdrawal = () => {
           <input
             type="text"
             ref={inputRef} 
-            className={styles['amount-input']} 
+            className={`${styles['amount-input']} ${styles['center-align']}`} 
             value={amount}
             onFocus={handleFocus}
             onBlur={handleBlur}

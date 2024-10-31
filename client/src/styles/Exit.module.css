@@ -1,0 +1,28 @@
+.exitContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+    background-color: #eaeaea;
+    flex-direction: column;
+    opacity: 0; /* Start with the container invisible */
+    transform: translateY(20px); /* Start slightly lower */
+    transition: opacity 1s ease, transform 1s ease; /* Transition properties */
+}
+
+.exitContainer.visible {
+    opacity: 1; /* Fully visible */
+    transform: translateY(0); /* Move to original position */
+}
+
+.exitContainer h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.exitContainer p {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #333;
+}
