@@ -1,6 +1,10 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
+//import { initializeApp } from "firebase/app";
+//import { getDatabase, ref } from "firebase/database"; // Import the database module
+
+const { initializeApp } = require('firebase/app');
+const { getDatabase, ref, push, set, get, update, remove } = require('firebase/database');
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -19,6 +23,7 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 
-export { db };
+// Initialize and export Realtime Database
+const database = getDatabase(app);
+module.exports = { database, ref, push, set, get, update, remove };
