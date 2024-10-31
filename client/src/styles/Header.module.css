@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans&family=Noto+Sans+SC:wght@400&display=swap');
+
 .atm-header {
     display: flex;
     justify-content: space-between;
@@ -23,7 +25,9 @@
   .language {
     margin-right: 20px;
     font-size: 20px;
+    font-family: 'Noto Sans SC', sans-serif; 
   }
+  
   
   .header-divider {
     width: 2px;
@@ -51,12 +55,13 @@
     height: 24px;
     margin-bottom: 5px;
     transition: color 0.3s ease; 
+    font-family: Arial, sans-serif;
   }
   
   .exit-text {
     font-size: 16px;
     color: #000;
-    transition: color 0.3s ease; 
+    transition: color 0.3s ease;
   }
   
   

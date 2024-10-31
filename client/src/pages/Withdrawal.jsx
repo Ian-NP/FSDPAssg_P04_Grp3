@@ -1,12 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import Header from '../components/Header';
 import Button from '../components/Button';
-import commonStyles from "../styles/Common.module.css"; // Import Common.css
-import styles from '../styles/Withdrawal.module.css'; // Change to .module.css
+import commonStyles from "../styles/Common.module.css"; 
+import styles from '../styles/Withdrawal.module.css';
 
 const Withdrawal = () => {
   const [amount, setAmount] = useState("0.00");
-  const inputRef = useRef(null); 
 
   const handleClear = () => {
     setAmount("0.00");
@@ -16,28 +15,16 @@ const Withdrawal = () => {
     console.log("Confirm button clicked with amount:", amount);
   };
 
-  useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.selectionStart = inputRef.current.selectionEnd = amount.length;
-    }
-  }, [amount]);
-
-  const handleFocus = () => {
-    if (amount === "0.00") {
-      setAmount(""); 
-    }
+  const handleAmountChange = (e) => {
+    setAmount(e.target.value);
   };
 
-  const handleBlur = () => {
-    if (amount === "") {
-      setAmount("0.00"); 
-    }
-  };
+  const isAmountZero = amount === "0.00" || amount === "";
 
   return (
     <div className={commonStyles['atm-container']}>
       <Header />
-      <main className={commonStyles['atm-main']}>
+      <main className={styles['withdrawal-main']}>
         <h2>Please enter amount in multiples of $10 or $50</h2>
         <div className={styles['input-container']}>
           <span className={styles['currency-symbol']}>$</span>
@@ -46,14 +33,24 @@ const Withdrawal = () => {
             ref={inputRef} 
             className={`${styles['amount-input']} ${styles['center-align']}`} 
             value={amount}
-            onFocus={handleFocus}
-            onBlur={handleBlur}
-            onChange={(e) => setAmount(e.target.value)}
+            onChange={handleAmountChange}
+            onFocus={() => amount === "0.00" && setAmount("")}
+            onBlur={() => amount === "" && setAmount("0.00")}
           />
         </div>
-        <div className={commonStyles['button-container']}>
-          <Button label="Clear" onClick={handleClear} />
-          <Button label="Confirm" onClick={handleConfirm} />
+        <div className={styles['button-container']}>
+          <Button 
+            label="Clear" 
+            onClick={handleClear} 
+            size="large" 
+            disabled={isAmountZero} 
+          />
+          <Button 
+            label="Confirm" 
+            onClick={handleConfirm} 
+            size="large" 
+            disabled={isAmountZero} 
+          />
         </div>
       </main>
     </div>

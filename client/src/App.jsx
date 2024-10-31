@@ -7,6 +7,7 @@ import MainMenu from './pages/MainMenu';
 import AccountSelection from './pages/AccountSelection';
 import Withdrawal from './pages/Withdrawal';
 import Loading from "./pages/Loading";
+import ReceiptChoice from './pages/ReceiptChoice';
 import BalanceEnquiry from "./pages/BalanceEnquiry";
 import MonitorSpendingQR from "./pages/MonitorSpendingQR";
 import Exit from "./pages/Exit";
@@ -25,6 +26,7 @@ const App = () => {
         <Route path="/exit" element={<Exit />} />
         <Route path="/accountSelection" element={<AccountSelection />} />
         <Route path="/withdrawal" element={<Withdrawal />} />
+        <Route path="/receiptChoice" element={<ReceiptChoice />} />
       </Routes>
     </>
   );
