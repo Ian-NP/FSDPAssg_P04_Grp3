@@ -1,0 +1,63 @@
+.atm-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 10px 20px;
+    background-color: #f5f5f5;
+  }
+  
+  .ocbc-logo {
+    width: 150px;
+    padding-left: 30px;
+  }
+  
+  .header-right {
+    display: flex;
+    align-items: center;
+  }
+  
+  .language {
+    margin-right: 20px;
+    font-size: 20px;
+  }
+  
+  .header-divider {
+    width: 2px;
+    height: 35px;
+    background-color: #ccc;
+    margin: 0 10px;
+  }
+  
+  .exit-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: none; 
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    outline: none;
+    transition: color 0.3s ease, transform 0.3s ease; 
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  
+  .exit-icon {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 5px;
+    transition: color 0.3s ease; 
+  }
+  
+  .exit-text {
+    font-size: 16px;
+    color: #000;
+    transition: color 0.3s ease; 
+  }
+  
+  
+  .exit-container:hover {
+    transform: scale(1.05); 
+  }
+  
