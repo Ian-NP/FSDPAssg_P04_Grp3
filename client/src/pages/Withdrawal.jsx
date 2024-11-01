@@ -30,8 +30,7 @@ const Withdrawal = () => {
           <span className={styles['currency-symbol']}>$</span>
           <input
             type="text"
-            ref={inputRef} 
-            className={`${styles['amount-input']} ${styles['center-align']}`} 
+            className={`${styles['amount-input']} ${styles['center-align']}`}
             value={amount}
             onChange={handleAmountChange}
             onFocus={() => amount === "0.00" && setAmount("")}

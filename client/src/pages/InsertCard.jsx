@@ -6,6 +6,7 @@ import Lottie from 'lottie-react';
 import InsertCardAnimation from '../assets/InsertCardAnimation.json'; // Import Lottie animation
 import OCBClogo from '../assets/OCBClogo.png';
 
+
 const InsertCard = () => {
   const navigate = useNavigate(); // Initialize useNavigate for navigation
 
@@ -13,6 +14,8 @@ const InsertCard = () => {
     // Simulate card insertion logic here
     navigate("/enter-pin"); // Navigate to enter PIN screen
   };
+
+  
 
   // Code to listen when enter key is pressed and call handleCardInsert
   document.addEventListener("keydown", (event) => {

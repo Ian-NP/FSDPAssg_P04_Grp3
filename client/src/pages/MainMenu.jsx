@@ -19,6 +19,8 @@ const MainMenu = ({ accountId, userId }) => {
         setUser({ name: 'Ian' }); // Example update
       }, []); // Dependency array includes only necessary dependencies
 
+    
+
     return (
         <Layout>
             <div className={styles.mainMenuContainer}>
@@ -27,7 +29,7 @@ const MainMenu = ({ accountId, userId }) => {
                     <p>What would you like to do today?</p>
                 </div>
                 <div className={styles.mainMenuOptionsContainer}>
-                    <MainMenuOption title="Withdraw" img={WithdrawGraphic} link="/withdrawal" />
+                    <MainMenuOption title="Withdraw" img={WithdrawGraphic} link="/AccountSelection" />
                     <MainMenuOption title="Money Transfer" img={MoneyTransferGraphic} />
                     <MainMenuOption title="Deposit" img={DepositGraphic} />
                     <MainMenuOption title="Monitor Spending" img={BalanceEnquiryGraphic} link="/monitorSpendingQR" />
