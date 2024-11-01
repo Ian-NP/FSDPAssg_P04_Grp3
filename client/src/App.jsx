@@ -14,6 +14,9 @@ import RemoveCard from './pages/RemoveCard';
 import CollectCash from './pages/CollectCash';
 import TransactionComplete from './pages/TransactionComplete';
 import AccountSelectionDeposit from './pages/AccountSelectionDeposit';
+import DepositRules from './pages/DepositRules';
+import DepositCash from './pages/DepositCash';
+import TransactionSummary from './pages/TransactionSummary';
 import Exit from "./pages/Exit";
 import './styles/App.css';
 
@@ -35,6 +38,9 @@ const App = () => {
         <Route path="/collectCash" element={<CollectCash />} /> 
         <Route path="/transactionComplete" element={<TransactionComplete />} /> 
         <Route path="/accountSelectionDeposit" element={<AccountSelectionDeposit />} />
+        <Route path="/depositRules" element={<DepositRules />} /> 
+        <Route path="/depositCash" element={<DepositCash />} /> 
+        <Route path="/transactionSummary" element={<TransactionSummary />} /> 
       </Routes>
     </>
   );
