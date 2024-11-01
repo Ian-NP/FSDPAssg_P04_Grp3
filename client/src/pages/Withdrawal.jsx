@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; 
 import Header from '../components/Header';
 import Button from '../components/Button';
 import commonStyles from "../styles/Common.module.css"; 
@@ -6,6 +7,7 @@ import styles from '../styles/Withdrawal.module.css';
 
 const Withdrawal = () => {
   const [amount, setAmount] = useState("0.00");
+  const navigate = useNavigate(); 
 
   const handleClear = () => {
     setAmount("0.00");
@@ -13,6 +15,7 @@ const Withdrawal = () => {
 
   const handleConfirm = () => {
     console.log("Confirm button clicked with amount:", amount);
+    navigate("/receiptChoice"); 
   };
 
   const handleAmountChange = (e) => {
@@ -41,13 +44,13 @@ const Withdrawal = () => {
           <Button 
             label="Clear" 
             onClick={handleClear} 
-            size="large" 
+            size="medium" 
             disabled={isAmountZero} 
           />
           <Button 
             label="Confirm" 
             onClick={handleConfirm} 
-            size="large" 
+            size="medium" 
             disabled={isAmountZero} 
           />
         </div>

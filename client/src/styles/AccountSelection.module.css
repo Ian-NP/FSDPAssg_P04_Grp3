@@ -1,10 +1,11 @@
-.account-buttons {
+.account-buttons-large {
     display: flex;
     gap: 20px;
     justify-content: center;
   }
   
   .account-button {
-    width: 250px;
+    width: 280px;
+    height: 200px;
   }
   

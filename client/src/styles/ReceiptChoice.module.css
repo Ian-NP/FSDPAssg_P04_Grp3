@@ -4,7 +4,7 @@
   }
   
   .title {
-    font-size: 24px;
+    font-size: 30px;
     margin-bottom: 20px;
     color: #333;
   }
@@ -14,7 +14,7 @@
     grid-template-columns: repeat(3, 1fr); 
     gap: 15px;
     justify-content: center;
-    margin-top: 20px;
+    margin-top: 40px;
   }
   
   .button-group button:nth-child(4),

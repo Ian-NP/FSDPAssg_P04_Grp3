@@ -10,6 +10,9 @@ import Loading from "./pages/Loading";
 import ReceiptChoice from './pages/ReceiptChoice';
 import BalanceEnquiry from "./pages/BalanceEnquiry";
 import MonitorSpendingQR from "./pages/MonitorSpendingQR";
+import RemoveCard from './pages/RemoveCard';
+import CollectCash from './pages/CollectCash';
+// import TransactionComplete from './pages/TransactionComplete';
 import Exit from "./pages/Exit";
 import './styles/App.css';
 
@@ -27,6 +30,9 @@ const App = () => {
         <Route path="/accountSelection" element={<AccountSelection />} />
         <Route path="/withdrawal" element={<Withdrawal />} />
         <Route path="/receiptChoice" element={<ReceiptChoice />} />
+        <Route path="/removeCard" element={<RemoveCard />} />
+        <Route path="/collectCash" element={<CollectCash />} /> 
+        {/* <Route path="/transactionComplete" element={<TransactionComplete />} /> */}
       </Routes>
     </>
   );

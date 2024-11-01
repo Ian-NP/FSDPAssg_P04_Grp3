@@ -1,16 +1,16 @@
 import React from 'react';
 import Header from '../components/Header';
 import Button from '../components/Button';
-import commonStyles from "../styles/Common.module.css"; // Import Common.css
-import styles from '../styles/AccountSelection.module.css'; // Change to .module.css
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import commonStyles from "../styles/Common.module.css";
+import styles from '../styles/AccountSelection.module.css';
+import { useNavigate } from 'react-router-dom';
 
 const AccountSelection = () => {
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   const onProceed = () => {
     console.log('Proceeding to withdrawal');
-    navigate('/withdrawal'); // Use navigate instead of Navigate
+    navigate('/withdrawal');
   };
 
   return (
@@ -18,7 +18,7 @@ const AccountSelection = () => {
       <Header />
       <main className={commonStyles['atm-main']}>
         <h2>Please select your account type</h2>
-        <div className={styles['account-buttons']}>
+        <div className={styles['account-buttons-large']}>
           <Button label="Accounts with Statements/ Checking Account/ EasiCredit" onClick={onProceed} size="large" />
           <Button label="Passbook Savings" size="large" />
           <Button label="Credit Card Cash Advance" size="large" />

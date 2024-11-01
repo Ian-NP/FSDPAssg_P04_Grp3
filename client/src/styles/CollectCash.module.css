@@ -1,0 +1,21 @@
+.collect-cash-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+  }
+  
+  .cash-image {
+    width: 200px; 
+    margin-bottom: 20px;
+  }
+  
+  .collect-text {
+    font-size: 24px;
+    font-weight: bold;
+    color: #fff;
+  }
