@@ -5,7 +5,7 @@ const corsOptions = {
     origin: ["http://localhost:3000"],
     optionsSuccessStatus: 200
 };
-const transactionRoutes = require("./transactions");
+const transactionRoutes = require("./models/transactions");
 
 app.use(cors(corsOptions)); 
 
