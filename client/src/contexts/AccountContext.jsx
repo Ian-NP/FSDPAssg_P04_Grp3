@@ -6,7 +6,7 @@ const AccountContext = createContext();
 
 export const AccountProvider = ({ children }) => {
   const [accounts, setAccounts] = useState([]); // List of accounts
-  const [accountDetails, setAccountDetails] = useState(null); // To store details of the validated account
+  const [accountDetails, setAccountDetails] = useState({}); // To store details of the validated account
   const [pinError, setPinError] = useState('');
 
   // Function to validate PIN and fetch account details
@@ -28,8 +28,15 @@ export const AccountProvider = ({ children }) => {
     }
   };
 
+    // Function to reset account context state
+    const LogOutAcc = () => {
+      setAccounts([]);
+      setAccountDetails(null);
+      setPinError('');
+    };
+
   return (
-    <AccountContext.Provider value={{ accounts, pinError, login }}>
+    <AccountContext.Provider value={{ accounts, pinError, login, LogOutAcc, setAccountDetails }}>
       {children}
     </AccountContext.Provider>
   );

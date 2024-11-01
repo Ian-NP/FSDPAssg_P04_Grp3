@@ -8,6 +8,9 @@ import AccountSelection from './pages/AccountSelection';
 import Withdrawal from './pages/Withdrawal';
 import Loading from "./pages/Loading";
 import ReceiptChoice from './pages/ReceiptChoice';
+import BalanceEnquiry from "./pages/BalanceEnquiry";
+import MonitorSpendingQR from "./pages/MonitorSpendingQR";
+import Exit from "./pages/Exit";
 import './styles/App.css';
 
 const App = () => {
@@ -17,7 +20,10 @@ const App = () => {
         <Route path="/" element={<InsertCard />} />
         <Route path="/enter-pin" element={<EnterPin />} />
         <Route path="/mainMenu" element={<MainMenu />} />
+        <Route path="/balanceEnquiry" element={<BalanceEnquiry />} />
+        <Route path="/monitorSpendingQR" element={<MonitorSpendingQR />} />
         <Route path="/loading" element={<Loading />} />
+        <Route path="/exit" element={<Exit />} />
         <Route path="/accountSelection" element={<AccountSelection />} />
         <Route path="/withdrawal" element={<Withdrawal />} />
         <Route path="/receiptChoice" element={<ReceiptChoice />} />

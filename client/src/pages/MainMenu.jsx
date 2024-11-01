@@ -27,11 +27,11 @@ const MainMenu = ({ accountId, userId }) => {
                     <p>What would you like to do today?</p>
                 </div>
                 <div className={styles.mainMenuOptionsContainer}>
-                    <MainMenuOption title="Withdraw" img={WithdrawGraphic} />
+                    <MainMenuOption title="Withdraw" img={WithdrawGraphic} link="/withdrawal" />
                     <MainMenuOption title="Money Transfer" img={MoneyTransferGraphic} />
                     <MainMenuOption title="Deposit" img={DepositGraphic} />
-                    <MainMenuOption title="Pay Bills" img={PayBillsGraphic} />
-                    <MainMenuOption title="Balance Enquiry" img={BalanceEnquiryGraphic} />
+                    <MainMenuOption title="Monitor Spending" img={BalanceEnquiryGraphic} link="/monitorSpendingQR" />
+                    <MainMenuOption title="Balance Enquiry" img={PayBillsGraphic} link="/balanceEnquiry" />
                     <MainMenuOption title="Print Statement" img={PrintStatement} />
                 </div>
             </div>

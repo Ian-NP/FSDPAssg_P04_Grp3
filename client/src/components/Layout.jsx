@@ -5,7 +5,7 @@ import styles from '../styles/Common.module.css'; // Import Layout.css
 
 const Layout = ({ children, onExit }) => {
   return (
-    <div className={styles.atm-container}>
+    <div className={styles['atm-container']}>
       <Header onExit={onExit} />
       {children}
     </div>

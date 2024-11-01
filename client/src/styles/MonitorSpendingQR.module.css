@@ -1,0 +1,58 @@
+.monitorSpendingQRContainer{
+    width: 100%;
+    height: calc(100% - 20px);
+    margin-top: 20px;
+    background-color: #E11A27;
+    border-radius: 20px;
+}
+
+.informationContainer{
+    height: 85%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+}
+
+.informationContainer img{
+    background-color: white;
+    border-radius: 10px;
+    width: 350px;
+    height: 350px;
+}
+
+.informationContainer h2{
+    color: white;
+    font-size: 2.5rem;
+    margin-top: 20px;
+    width: 50%;
+    text-align: center;
+    margin-bottom: 0px;
+}
+
+.navigationBtns {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.navButton {
+    background-color: #3F3F3F; /* Your primary color */
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 0px 20px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    font-weight: 600;
+    gap: 1rem;
+    transition: all 0.3s ease-in-out;
+}
+
+.navButton:hover {
+    background-color: #202020; /* Your primary color */
+}
