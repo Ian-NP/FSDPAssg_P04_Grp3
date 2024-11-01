@@ -12,7 +12,8 @@ import BalanceEnquiry from "./pages/BalanceEnquiry";
 import MonitorSpendingQR from "./pages/MonitorSpendingQR";
 import RemoveCard from './pages/RemoveCard';
 import CollectCash from './pages/CollectCash';
-// import TransactionComplete from './pages/TransactionComplete';
+import TransactionComplete from './pages/TransactionComplete';
+import AccountSelectionDeposit from './pages/AccountSelectionDeposit';
 import Exit from "./pages/Exit";
 import './styles/App.css';
 
@@ -32,7 +33,8 @@ const App = () => {
         <Route path="/receiptChoice" element={<ReceiptChoice />} />
         <Route path="/removeCard" element={<RemoveCard />} />
         <Route path="/collectCash" element={<CollectCash />} /> 
-        {/* <Route path="/transactionComplete" element={<TransactionComplete />} /> */}
+        <Route path="/transactionComplete" element={<TransactionComplete />} /> 
+        <Route path="/accountSelectionDeposit" element={<AccountSelectionDeposit />} />
       </Routes>
     </>
   );
