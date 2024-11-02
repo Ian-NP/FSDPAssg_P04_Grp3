@@ -17,15 +17,17 @@
 
 /* medium button style */
 .atm-button.medium {
-  padding: 15px 30px;
-  height: 50px;
+  width: 180px;
+  height: 60px;
+  gap: 20px;
 }
 
 /* large button style with fixed width */
 .atm-button.large {
   padding: 20px 0; 
   font-size: 18px;
-  width: 250px; 
+  width: 280px; 
+  height: 100px;
   display: inline-block;
 }
 
