@@ -24,10 +24,11 @@
   }
   
   .atm-main h2 {
-    font-size: 20px;
+    font-size: 30px;
     margin-bottom: 35px;
     color: #333;
   }
+
   
   .button-container {
     display: flex;

@@ -31,7 +31,7 @@ const MainMenu = ({ accountId, userId }) => {
                 <div className={styles.mainMenuOptionsContainer}>
                     <MainMenuOption title="Withdraw" img={WithdrawGraphic} link="/AccountSelection" />
                     <MainMenuOption title="Money Transfer" img={MoneyTransferGraphic} />
-                    <MainMenuOption title="Deposit" img={DepositGraphic} />
+                    <MainMenuOption title="Deposit" img={DepositGraphic} link="/AccountSelectionDeposit" />
                     <MainMenuOption title="Monitor Spending" img={BalanceEnquiryGraphic} link="/monitorSpendingQR" />
                     <MainMenuOption title="Balance Enquiry" img={PayBillsGraphic} link="/balanceEnquiry" />
                     <MainMenuOption title="Print Statement" img={PrintStatement} />
