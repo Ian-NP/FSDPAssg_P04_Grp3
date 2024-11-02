@@ -1,7 +1,8 @@
 // transactionRoutes.js
 const express = require('express');
 const router = express.Router();
-const { database, ref, push, set, get, update, remove } = require('../firebase.js');
+const { getDatabase, update, ref, get, set, push, query, orderByChild, equalTo, remove } = require("firebase/database");
+const { database } = require('../firebase.js');
 
 // Create a transaction
 //router.post('/transactions', (req, res) => {
