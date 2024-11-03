@@ -71,33 +71,36 @@ const loginAccount = async (req, res) => {
 };
 
 const createAccount = async (req, res) => {
-  const { account_num, account_status, account_type, balance, category, password } = req.body;
+    const { account_name, email, phoneNo, account_num, account_status, account_type, balance, category, password } = req.body;
 
-  // Validate required fields
-  const validationError = validateRequestBody(req.body, ['account_num', 'password']);
-  if (validationError) {
-      return res.status(400).json({ message: validationError });
-  }
+    // Validate required fields
+    const validationError = validateRequestBody(req.body, ['account_name', 'email', 'phoneNo', 'account_num', 'password']);
+    if (validationError) {
+        return res.status(400).json({ message: validationError });
+    }
 
-  try {
-      // Call the createAccount method from the model directly
-      const account = await Account.createAccount({
-          account_num,
-          account_status, // This will be validated in the model
-          account_type,   // This will be validated in the model
-          balance: parseFloat(balance) || 0, // Ensure balance is a number
-          category: parseInt(category) || 0, // Ensure category is a number
-          password // The plain password will be hashed in the model
-      });
+    try {
+        // Call the createAccount method from the model directly
+        const account = await Account.createAccount({
+            account_name,
+            email,
+            phoneNo,
+            account_num,
+            account_status, // This will be validated in the model
+            account_type,   // This will be validated in the model
+            balance: parseFloat(balance) || 0, // Ensure balance is a number
+            category: parseInt(category) || 0, // Ensure category is a number
+            password // The plain password will be hashed in the model
+        });
 
-      return res.status(201).json({ 
-          message: "Account created successfully",
-          accountId: account.id,
-      });
-  } catch (error) {
-      console.error("Error creating account:", error.message);
-      return res.status(500).json({ message: "Error creating account", error: error.message });
-  }
+        return res.status(201).json({ 
+            message: "Account created successfully",
+            accountId: account.id,
+        });
+    } catch (error) {
+        console.error("Error creating account:", error.message);
+        return res.status(500).json({ message: "Error creating account", error: error.message });
+    }
 };
 
 const updateBalance = async (req, res) => {

@@ -7,16 +7,20 @@ const ACCOUNT_STATUSES = ['active', 'suspended', 'closed'];
 const ACCOUNT_TYPES = ['savings', 'checking', 'business'];
 
 class Account {
-    constructor({ account_num, account_status = 'active', account_type = 'savings', balance = 0, category }) {
+    constructor({ account_name, email, phoneNo, account_num, account_status = 'active', account_type = 'savings', balance = 0, category, password }) {
+        this.account_name = account_name;
+        this.email = email;
+        this.phoneNo = phoneNo;
         this.account_num = account_num;
-        this.account_status = this.validateAccountStatus(account_status);
-        this.account_type = this.validateAccountType(account_type);
+        this.account_status = Account.validateAccountStatus(account_status); // Use Account to call static method
+        this.account_type = Account.validateAccountType(account_type); // Use Account to call static method
         this.balance = balance; // Ensure balance is a number
         this.category = category;
+        this.password = password; // Store password securely (hashed)
     }
 
     // Validate the account status
-    validateAccountStatus(status) {
+    static validateAccountStatus(status) {
         if (!ACCOUNT_STATUSES.includes(status)) {
             throw new Error(`Invalid account status: ${status}. Must be one of: ${ACCOUNT_STATUSES.join(', ')}`);
         }
@@ -24,7 +28,7 @@ class Account {
     }
 
     // Validate the account type
-    validateAccountType(type) {
+    static validateAccountType(type) {
         if (!ACCOUNT_TYPES.includes(type)) {
             throw new Error(`Invalid account type: ${type}. Must be one of: ${ACCOUNT_TYPES.join(', ')}`);
         }
@@ -34,11 +38,15 @@ class Account {
     // Method to convert instance to Firebase-compatible JSON
     toFirebase() {
         return {
+            account_name: this.account_name,
+            email: this.email,
+            phoneNo: this.phoneNo,
             account_num: this.account_num,
             account_status: this.account_status,
             account_type: this.account_type,
             balance: this.balance,
             category: this.category,
+            password: this.password, // Include password (ensure it is hashed before storing)
         };
     }
 
@@ -117,50 +125,56 @@ class Account {
 
     // Create a new account
     static async createAccount(accountData) {
-      try {
-          // Validate account data
-          const { account_num, account_status, account_type, balance, category } = accountData;
+        try {
+            // Validate account data
+            const { account_name, email, phoneNo, account_num, account_status, account_type, balance, category, password } = accountData;
 
-          // Check for required fields and validate account status and type
-          if (!account_num || !category) {
-              throw new Error("Account number and category are required.");
-          }
+            console.log("Creating account with data:", accountData);
 
-          // Validate account status and type using existing methods
-          const validatedAccountStatus = this.validateAccountStatus(account_status);
-          const validatedAccountType = this.validateAccountType(account_type);
+            // Check for required fields
+            if (
+                account_num === undefined || 
+                category === undefined || 
+                account_name === undefined || 
+                email === undefined || 
+                phoneNo === undefined || 
+                password === undefined
+            ) {
+                throw new Error("All fields including account number, category, account name, email, phone number, and password are required.");
+            }
 
-          // Create a new account instance
-          const newAccount = new Account({
-              account_num,
-              account_status: validatedAccountStatus,
-              account_type: validatedAccountType,
-              balance: parseFloat(balance), // Ensure balance is a number
-              category: parseInt(category), // Ensure category is a number
-          });
+            // Validate account status and type using existing methods
+            const validatedAccountStatus = Account.validateAccountStatus(account_status);
+            const validatedAccountType = Account.validateAccountType(account_type);
 
-          const accountsRef = ref(database, 'account');
-          const newAccountRef = push(accountsRef);
+            // Hash the password with bcrypt
+            const hashedPassword = await bcryptjs.hash(password, 10);
 
-          // Hash the password with bcrypt
-          const hashedPassword = await bcryptjs.hash(accountData.password, 10);
+            // Create a new account instance
+            const newAccount = new Account({
+                account_name,
+                email,
+                phoneNo,
+                account_num,
+                account_status: validatedAccountStatus,
+                account_type: validatedAccountType,
+                balance: parseFloat(balance), // Ensure balance is a number
+                category: parseInt(category), // Ensure category is a number
+                password: hashedPassword, // Store the hashed password
+            });
 
-          // Store the account data, replacing the plain password with the hashed version
-          const accountWithHashedPassword = {
-              ...newAccount.toFirebase(), // Use the method to get Firebase-compatible data
-              password: hashedPassword
-          };
+            const accountsRef = ref(database, 'account');
+            const newAccountRef = push(accountsRef);
 
-          // Save the new account to the database
-          await set(newAccountRef, accountWithHashedPassword);
-          console.log("Account created with ID:", newAccountRef.key);
-          return { id: newAccountRef.key };
-      } catch (error) {
-          console.error("Error creating account:", error.message);
-          throw new Error("Error adding account: " + error.message); // Provide more detail on the error
-      }
+            // Save the new account to the database
+            await set(newAccountRef, newAccount.toFirebase());
+            console.log("Account created with ID:", newAccountRef.key);
+            return { id: newAccountRef.key };
+        } catch (error) {
+            console.error("Error creating account:", error.message);
+            throw new Error("Error adding account: " + error.message); // Provide more detail on the error
+        }
     }
-
 
     // Update account balance
     static async updateBalance(accountNum, newBalance) {
