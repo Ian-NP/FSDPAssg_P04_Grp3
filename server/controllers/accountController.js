@@ -61,7 +61,7 @@ const loginAccount = async (req, res) => {
     try {
         const account = await Account.login(account_num, password);
         return res.status(200).json({
-            message: "Login successful",
+            success: true,
             account,
         });
     } catch (error) {
@@ -114,9 +114,9 @@ const updateBalance = async (req, res) => {
     try {
         const result = await updateAccountBalance(accountNum, newBalance);
         if (result) {
-            return res.status(200).json({ message: "Balance updated successfully." });
+            return res.status(200).json({ success: true, message: "Balance updated successfully." });
         } else {
-            return res.status(404).json({ message: "No account found with the specified account number." });
+            return res.status(404).json({ success: false, message: "No account found with the specified account number." });
         }
     } catch (error) {
         console.error("Error updating balance:", error);

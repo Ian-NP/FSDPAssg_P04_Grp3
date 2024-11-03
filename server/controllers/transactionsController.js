@@ -1,6 +1,7 @@
 // transaction.js
 const express = require('express');
-const { database, ref, push, set, get, update, remove } = require('../firebase.js');
+const { getDatabase, update, ref, get, set, push, query, orderByChild, equalTo, remove } = require("firebase/database");
+const { database } = require('../firebase.js');
 
 // Helper function to convert milliseconds to readable datetime
 const convertTimestampToDateTime = (timestamp) => {
@@ -20,22 +21,32 @@ const convertTimestampToDateTime = (timestamp) => {
 
 // Create a transaction
 exports.createTransaction = async (req, res) => {
-  const transaction = { ...req.body, transaction_date: Date.now() }; 
+  const transaction = { ...req.body, transaction_date: Date.now() };
 
   try {
-    // Retrieve all existing transactions to count them
-    const snapshot = await get(ref(database, 'transactions'));
-    const transactionCount = snapshot.size || 0;
+      // Retrieve all existing transactions to count them
+      const snapshot = await get(ref(database, 'transactions'));
+      const transactionCount = snapshot.size || 0;
 
-    // Generate a custom key
-    const customKey = `transaction_id_${transactionCount + 1}`;
+      // Generate a custom key
+      const customKey = `transaction_id_${transactionCount + 1}`;
 
-    // Set the transaction with the custom key
-    await set(ref(database, `transactions/${customKey}`), transaction);
+      // Set the transaction with the custom key
+      await set(ref(database, `transactions/${customKey}`), transaction);
 
-    res.status(201).send({ id: customKey, ...transaction, transaction_date: convertTimestampToDateTime(transaction.transaction_date) });
+      // Respond with success status and transaction details
+      res.status(201).send({
+          success: true,
+          id: customKey,
+          ...transaction,
+          transaction_date: convertTimestampToDateTime(transaction.transaction_date)
+      });
   } catch (error) {
-    res.status(500).send(error);
+      console.error("Error creating transaction:", error);
+      res.status(500).send({
+          success: false,
+          message: "An error occurred while creating the transaction."
+      });
   }
 };
 

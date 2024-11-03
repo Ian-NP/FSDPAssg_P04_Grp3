@@ -5,10 +5,13 @@ import Button from '../components/Button';
 import Loading from './Loading';
 import commonStyles from '../styles/Common.module.css';
 import styles from '../styles/TransactionSummary.module.css';
+import { useAccount } from '../contexts/AccountContext';
+import axios from 'axios';
 
 const TransactionSummary = () => {
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
+    const { accountDetails, depositAccount } = useAccount();
 
     useEffect(() => {
         setTimeout(() => {
@@ -24,9 +27,55 @@ const TransactionSummary = () => {
         navigate('/exit');
     };
 
-    const handleConfirm = () => {
-        navigate('/transactionComplete');
-    };
+    const handleConfirm = async () => {
+        const amount = 187; // Hardcoded amount for now, will be dynamic in the future
+        console.log("Confirm button clicked with amount:", amount);
+        
+        // Check if the amount is valid (e.g., greater than 0)
+        if (amount <= 0) {
+            alert("Please enter a valid amount greater than $0.");
+            return;
+        } 
+    
+        // Proceed to deposit the amount
+        try {
+            const success = await depositAccount(amount); // Ensure depositAccount returns a boolean
+            if (success) {
+                console.log("Deposit successful");
+                
+                // Prepare transaction data for logging
+                const transactionData = {
+                    amount: parseInt(amount), // Convert amount to an integer
+                    description: "",
+                    destination_account: accountDetails.account_num,
+                    source_account_id: accountDetails.account_num,
+                    status: "Completed",
+                    transaction_date: Date.now(), // Use current datetime as epoch
+                    transaction_type: "deposit"
+                };
+    
+                // Make POST request to log the transaction
+                try {
+                    const response = await axios.post('http://localhost:3000/api/transactions', transactionData);
+                    if (response.data.success) {
+                        console.log("Transaction created successfully:", response.data);
+                        navigate('/transactionComplete'); // Navigate to transaction complete page
+                    } else {
+                        alert("An error occurred while recording the transaction. Please try again.");
+                    }
+                } catch (error) {
+                    console.error("Error creating transaction:", error);
+                    alert("An error occurred while recording the transaction. Please try again.");
+                }
+            } else {
+                alert("An error occurred during the deposit. Please try again.");
+            }
+        } catch (error) {
+            console.error("Error during deposit:", error);
+            alert("An error occurred during the deposit. Please try again.");
+        }
+    };    
+
 
     return (
         <div className={commonStyles['atm-container']}>

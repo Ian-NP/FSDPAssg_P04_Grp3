@@ -6,7 +6,7 @@ const cors = require('cors');
 const accountController = require('./controllers/accountController');
 
 const corsOptions = {
-    origin: ["http://localhost:3000"],
+    origin: ["http://localhost:5173"],
     optionsSuccessStatus: 200
 };
 const transactionRoutes = require("./models/transactions");

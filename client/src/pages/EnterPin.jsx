@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAccount } from '../contexts/AccountContext';
-import { useUser } from '../contexts/UserContext';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import Loading from './Loading';
@@ -8,7 +7,6 @@ import styles from '../styles/EnterPin.module.css';
 
 const EnterPin = ({ accountId }) => {
     const { login, pinError } = useAccount();
-    const { fetchAndSetUserData, error } = useUser();
     const [pin, setPin] = useState(['', '', '', '', '', '']);
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
@@ -87,17 +85,14 @@ const EnterPin = ({ accountId }) => {
         console.log("Fetching user data...");
 
         setIsLoading(true);
-        navigate('/mainMenu'); // Navigate to the main menu while fetching data
+        // navigate('/mainMenu'); // Navigate to the main menu while fetching data
         const fullPin = pin.join(''); // Join the array to form the complete PIN
+        // accountId is hard-coded
+        const accountId = '4111 1111 1111 1111';
         const accountData = await login(accountId, fullPin);
 
         if (accountData) {
-            const isUserDataFetched = await fetchAndSetUserData(accountData.userId);
-            if (isUserDataFetched) {
-                navigate('/mainMenu');
-            } else {
-                alert('Error fetching user data. Please try again.');
-            }
+            navigate('/mainMenu');
         } else {
             console.error('Invalid PIN entered');
         }
@@ -138,7 +133,6 @@ const EnterPin = ({ accountId }) => {
                         ))}
                     </form>
                     {pinError && <p>{pinError}</p>}
-                    {error && <p>{error}</p>}
                 </div>
             </Layout>
         )

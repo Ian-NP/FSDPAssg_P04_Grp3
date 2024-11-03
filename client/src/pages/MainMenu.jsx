@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useAccount } from '../contexts/AccountContext';
-import { useUser } from '../contexts/UserContext';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import styles from '../styles/MainMenu.module.css';
@@ -12,20 +11,17 @@ import PayBillsGraphic from "../assets/payBills.svg";
 import BalanceEnquiryGraphic from "../assets/balanceEnquiry.svg";
 import PrintStatement from "../assets/printStatement.svg";
 
-const MainMenu = ({ accountId, userId }) => {
+const MainMenu = () => {
     const [isLoading, setIsLoading] = useState(false);
-    const { user, setUser } = useUser();
-    useEffect(() => {
-        setUser({ name: 'Ian' }); // Example update
-      }, []); // Dependency array includes only necessary dependencies
+    const {accountDetails, setAccountDetails} = useAccount();
 
-    
+    console.log(accountDetails);
 
     return (
         <Layout>
             <div className={styles.mainMenuContainer}>
                 <div className={styles.mainMenuHeader}>
-                    <p>Hello {user.name}! 👋</p>
+                    <p>Hello {accountDetails.account_name}! 👋</p>
                     <p>What would you like to do today?</p>
                 </div>
                 <div className={styles.mainMenuOptionsContainer}>

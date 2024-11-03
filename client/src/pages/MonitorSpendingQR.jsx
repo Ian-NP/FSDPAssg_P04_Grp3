@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useAccount } from '../contexts/AccountContext';
-import { useUser } from '../contexts/UserContext';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import Loading from './Loading';

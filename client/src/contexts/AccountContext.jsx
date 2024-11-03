@@ -1,42 +1,101 @@
-// contexts/AccountContext.jsx
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
 const AccountContext = createContext();
 
 export const AccountProvider = ({ children }) => {
-  const [accounts, setAccounts] = useState([]); // List of accounts
-  const [accountDetails, setAccountDetails] = useState({}); // To store details of the validated account
+  const [accountDetails, setAccountDetails] = useState(() => {
+    // Check sessionStorage for existing account details on initial load
+    const savedAccount = sessionStorage.getItem('accountDetails');
+    return savedAccount ? JSON.parse(savedAccount) : {};
+  });
   const [pinError, setPinError] = useState('');
 
   // Function to validate PIN and fetch account details
   const login = async (accountId, pin) => {
+    console.log('Input accountId:', accountId, 'Input pin:', pin);
+  
     try {
-      const response = await axios.post('http://localhost:3000/api/validate-pin', { accountId, pin }); // Your API endpoint here
+      const response = await axios.post('http://localhost:3000/api/Accounts/login', { account_num: accountId, password: pin });
+      console.log('Full response:', response);
       if (response.data.success) {
-        setPinError(''); // Clear previous errors
-        setAccountDetails(response.data.account); // Store the validated account details
-        return response.data.account; // Return account data if PIN is valid
+        console.log('Account data:', response.data.account);
+        setAccountDetails(response.data.account);
+        // Store in sessionStorage
+        sessionStorage.setItem('accountDetails', JSON.stringify(response.data.account));
+        return true;
       } else {
-        setPinError('Invalid PIN. Please try again.'); // Set error message
-        return null; // Indicate failure
+        setPinError('Invalid PIN. Please try again.');
       }
     } catch (error) {
       console.error('Error validating PIN:', error);
-      setPinError('An error occurred. Please try again later.'); // Handle errors
-      return null; // Indicate failure
+      setPinError('An error occurred. Please try again later.');
+      return false;
     }
   };
 
-    // Function to reset account context state
-    const LogOutAcc = () => {
-      setAccounts([]);
-      setAccountDetails(null);
-      setPinError('');
-    };
+  const withdrawFromAccount = async (amount) => {
+    console.log('Input account number:', accountDetails.account_num, 'Input amount:', amount);
+    accountDetails.balance -= amount;
+  
+    try {
+      const response = await axios.put(`http://localhost:3000/api/Accounts/updateBalance/${accountDetails.account_num}`, { newBalance: accountDetails.balance });
+      console.log('Full response:', response);
+      if (response.data.success) {
+        sessionStorage.setItem('accountDetails', JSON.stringify(accountDetails));
+        return true;
+      } else {
+        console.error('Error updating balance:', response);
+        accountDetails.balance += amount; // Revert balance on error
+        setPinError('An error occurred. Please try again later.');
+        return false;
+      }
+    } catch (error) {
+      console.error('Error updating balance:', error);
+      accountDetails.balance += amount; // Revert balance on error
+      setPinError('An error occurred. Please try again later.');
+      return false;
+    }
+  };
+
+  const depositAccount = async (amount) => {
+    console.log('Input account number:', accountDetails.account_num, 'Input amount:', amount);
+    accountDetails.balance += amount; // Update balance for deposit
+  
+    try {
+      const response = await axios.put(`http://localhost:3000/api/Accounts/updateBalance/${accountDetails.account_num}`, { newBalance: accountDetails.balance });
+      console.log('Full response:', response);
+      if (response.data.success) {
+        sessionStorage.setItem('accountDetails', JSON.stringify(accountDetails));
+        return true;
+      } else {
+        console.error('Error updating balance:', response);
+        accountDetails.balance -= amount; // Revert balance on error
+        setPinError('An error occurred. Please try again later.');
+        return false;
+      }
+    } catch (error) {
+      console.error('Error updating balance:', error);
+      accountDetails.balance -= amount; // Revert balance on error
+      setPinError('An error occurred. Please try again later.');
+      return false;
+    }
+  };
+
+  useEffect(() => {
+    console.log('Updated accountDetails:', accountDetails);
+  }, [accountDetails]);
+
+  // Function to reset account context state
+  const LogOutAcc = () => {
+    setAccountDetails(null);
+    setPinError('');
+    // Clear sessionStorage
+    sessionStorage.removeItem('accountDetails');
+  };
 
   return (
-    <AccountContext.Provider value={{ accounts, pinError, login, LogOutAcc, setAccountDetails }}>
+    <AccountContext.Provider value={{ pinError, login, LogOutAcc, accountDetails, setAccountDetails, withdrawFromAccount, depositAccount }}>
       {children}
     </AccountContext.Provider>
   );

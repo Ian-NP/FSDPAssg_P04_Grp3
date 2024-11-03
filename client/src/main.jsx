@@ -7,10 +7,10 @@ import AppProvider from './contexts/AppProvider.jsx'; // Correctly importing the
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <BrowserRouter>
-      <AppProvider>
+    <AppProvider>
+      <BrowserRouter>
         <App />
-      </AppProvider>
-    </BrowserRouter>
+      </BrowserRouter>
+    </AppProvider>
   </StrictMode>,
 );
