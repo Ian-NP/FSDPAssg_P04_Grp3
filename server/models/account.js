@@ -87,17 +87,19 @@ class Account {
         }
     }
 
-    // Retrieve an account by its account number
     static async getAccountByAccountNum(accountNum) {
         try {
+            console.log("Searching for account number:", accountNum); // Log the account number being searched
             const accountQuery = query(ref(database, 'account'), orderByChild('account_num'), equalTo(accountNum));
             const snapshot = await get(accountQuery);
-
+    
             if (snapshot.exists()) {
                 const accountData = snapshot.val();
-                const accountId = Object.keys(accountData)[0];
-                return { id: accountId, ...accountData[accountId] };
+                console.log("Account data found:", accountData); // Log the found account data
+                const accountId = Object.keys(accountData)[0]; // Get the first account ID
+                return { id: accountId, ...accountData[accountId] }; // Return account data
             } else {
+                console.error("Account not found for:", accountNum);
                 throw new Error("Account not found");
             }
         } catch (error) {
@@ -105,6 +107,7 @@ class Account {
             throw new Error("Error retrieving account");
         }
     }
+    
 
     // Login method using getAccountByAccountNum
     static async login(accountNum, password) {

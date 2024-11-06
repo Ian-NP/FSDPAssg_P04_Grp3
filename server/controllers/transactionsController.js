@@ -1,7 +1,9 @@
-// transaction.js
-const express = require('express');
-const { getDatabase, update, ref, get, set, push, query, orderByChild, equalTo, remove } = require("firebase/database");
+// transactionsController.js
+const Account = require('../models/account');
+const { sendEmailReceipt } = require('../emailService'); 
+const { ref, get, set } = require("firebase/database");
 const { database } = require('../firebase.js');
+
 
 // Helper function to convert milliseconds to readable datetime
 const convertTimestampToDateTime = (timestamp) => {
@@ -19,22 +21,41 @@ const convertTimestampToDateTime = (timestamp) => {
  //     .catch((error) => res.status(500).send(error));
 //});
 
-// Create a transaction
-exports.createTransaction = async (req, res) => {
+
+const createTransaction = async (req, res) => {
   const transaction = { ...req.body, transaction_date: Date.now() };
+  const accountNum = transaction.source_account_id; 
+
+  if (!accountNum) {
+      return res.status(400).send({ success: false, message: 'Account number is required.' });
+  }
 
   try {
-      // Retrieve all existing transactions to count them
       const snapshot = await get(ref(database, 'transactions'));
       const transactionCount = snapshot.size || 0;
-
-      // Generate a custom key
       const customKey = `transaction_id_${transactionCount + 1}`;
 
-      // Set the transaction with the custom key
       await set(ref(database, `transactions/${customKey}`), transaction);
 
-      // Respond with success status and transaction details
+      const accountDetails = await Account.getAccountByAccountNum(accountNum);
+      if (!accountDetails) {
+          return res.status(404).send({ success: false, message: 'Account not found.' });
+      }
+
+      const userEmail = accountDetails.email; 
+
+      if (req.body.sendReceipt === 'email') {
+          try {
+              await sendEmailReceipt(userEmail, customKey, transaction.amount, convertTimestampToDateTime(transaction.transaction_date));
+          } catch (emailError) {
+              return res.status(500).send({
+                  success: false,
+                  message: "Failed to send email receipt.",
+                  error: emailError.message
+              });
+          }
+      }
+
       res.status(201).send({
           success: true,
           id: customKey,
@@ -42,31 +63,31 @@ exports.createTransaction = async (req, res) => {
           transaction_date: convertTimestampToDateTime(transaction.transaction_date)
       });
   } catch (error) {
-      console.error("Error creating transaction:", error);
       res.status(500).send({
           success: false,
-          message: "An error occurred while creating the transaction."
+          message: "An error occurred while creating the transaction.",
+          error: error.message
       });
   }
 };
 
+
 // Read all transactions 
-exports.getAllTransactions = async (req, res) => {
+const getAllTransactions = async (req, res) => {
   get(ref(database, 'transactions'))
       .then((snapshot) => {
           if (snapshot.exists()) {
               const transactions = [];
               snapshot.forEach(childSnapshot => {
-                const transaction = childSnapshot.val();
-                // Convert transaction_date if it exists
-                if (transaction.transaction_date) {
-                  transaction.transaction_date = convertTimestampToDateTime(transaction.transaction_date);
-                }
-                transactions.push({ id: childSnapshot.key, ...transaction });
-            });
-            res.status(200).send(transactions);
+                  const transaction = childSnapshot.val();
+                  if (transaction.transaction_date) {
+                      transaction.transaction_date = convertTimestampToDateTime(transaction.transaction_date);
+                  }
+                  transactions.push({ id: childSnapshot.key, ...transaction });
+              });
+              res.status(200).send(transactions);
           } else {
-            res.status(404).send({ message: "No transactions found" });
+              res.status(404).send({ message: "No transactions found" });
           }
       })
       .catch((error) => res.status(500).send(error));
@@ -113,69 +134,56 @@ exports.getAllTransactions = async (req, res) => {
 //   }
 // };
 
-// Get specific transactions based on transaction ID and linked destination accounts
-exports.getSpecificTransaction = async (req, res) => {
+// Get specific transaction
+const getSpecificTransaction = async (req, res) => {
   const { transactionId } = req.params;
-
   try {
-    // Fetch all transactions from the database
-    const snapshot = await get(ref(database, 'transactions'));
-
-    if (!snapshot.exists()) {
-      return res.status(404).send({ message: "No transactions found" });
-    }
-
-    let mainTransaction = null;
-    const linkedTransactions = [];
-
-    snapshot.forEach(childSnapshot => {
-      const transaction = childSnapshot.val();
-      const id = childSnapshot.key;
-
-      // Check if the current transaction matches the requested transaction ID
-      if (id === transactionId) {
-        // Convert transaction_date if it exists
-        if (transaction.transaction_date) {
-          transaction.transaction_date = convertTimestampToDateTime(transaction.transaction_date);
-        }
-        mainTransaction = { id, ...transaction };
+      const snapshot = await get(ref(database, 'transactions'));
+      if (!snapshot.exists()) {
+          return res.status(404).send({ message: "No transactions found" });
       }
 
-      // Check for linked transaction based on destination accounts
-      if (mainTransaction && (transaction.destination_account === mainTransaction.source_account_id || 
-          transaction.source_account_id === mainTransaction.destination_account)) {
-        // Convert transaction_date if it exists
-        if (transaction.transaction_date) {
-          transaction.transaction_date = convertTimestampToDateTime(transaction.transaction_date);
-        }
-        linkedTransactions.push({ id, ...transaction });
+      let mainTransaction = null;
+      const linkedTransactions = [];
+
+      snapshot.forEach(childSnapshot => {
+          const transaction = childSnapshot.val();
+          const id = childSnapshot.key;
+
+          if (id === transactionId) {
+              if (transaction.transaction_date) {
+                  transaction.transaction_date = convertTimestampToDateTime(transaction.transaction_date);
+              }
+              mainTransaction = { id, ...transaction };
+          }
+          if (mainTransaction && (transaction.destination_account === mainTransaction.source_account_id || 
+              transaction.source_account_id === mainTransaction.destination_account)) {
+              if (transaction.transaction_date) {
+                  transaction.transaction_date = convertTimestampToDateTime(transaction.transaction_date);
+              }
+              linkedTransactions.push({ id, ...transaction });
+          }
+      });
+
+      if (!mainTransaction) {
+          return res.status(404).send({ message: "Transaction not found" });
       }
-    });
 
-    // Check if the main transaction was found
-    if (!mainTransaction) {
-      return res.status(404).send({ message: "Transaction not found" });
-    }
-
-    // Include the main transaction in the output
-    linkedTransactions.push(mainTransaction);
-
-    res.status(200).send(linkedTransactions);
+      linkedTransactions.push(mainTransaction);
+      res.status(200).send(linkedTransactions);
   } catch (error) {
-    res.status(500).send(error);
+      res.status(500).send(error);
   }
 };
 
 
-
 // Update a transaction
-exports.updateTransaction = async (req, res) => {
+const updateTransaction = async (req, res) => {
   const { id } = req.params;
   const updatedData = req.body;
 
-  // If updatedData has a transaction_date, ensure it's in datetime format
   if (updatedData.transaction_date) {
-    updatedData.transaction_date = convertTimestampToDateTime(updatedData.transaction_date);
+      updatedData.transaction_date = convertTimestampToDateTime(updatedData.transaction_date);
   }
 
   update(ref(database, `transactions/${id}`), updatedData)
@@ -184,14 +192,23 @@ exports.updateTransaction = async (req, res) => {
 };
 
 // Delete a transaction
-exports.deleteTransaction = async (req, res) => {
+const deleteTransaction = async (req, res) => {
   const { id } = req.params;
 
   remove(ref(database, `transactions/${id}`))
       .then(() => {
-        res.status(200).send({message: 'Transaction has been deleted.'});
+          res.status(200).send({ message: 'Transaction has been deleted.' });
       })
       .catch((error) => {
-        res.status(500).send({error: 'An error occurred while deleting the transaction.'})
+          res.status(500).send({ error: 'An error occurred while deleting the transaction.' });
       });
 };
+
+module.exports = {
+    createTransaction,
+    getAllTransactions,
+    getSpecificTransaction,
+    updateTransaction,
+    deleteTransaction,
+  };
+  
