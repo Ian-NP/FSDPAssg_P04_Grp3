@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const accountController = require('./controllers/accountController');
-const transactionRoutes = require('./models/transactions'); // Ensure this points to your routes file
+const transactionRoutes = require('./models/transactions'); // Using models/transactions for routes
 
 const app = express();
 
@@ -14,17 +14,17 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Use the transaction routes
-app.use("/api", transactionRoutes); // This automatically includes your defined transaction routes
+// Mount transaction routes at /api/transactions
+app.use("/api/transactions", transactionRoutes);
 
-// Add your account routes
-app.get("/api/Accounts", accountController.getAllAccounts);
-app.get("/api/Accounts/firebaseid/:id", accountController.getAccountById);
-app.get("/api/Accounts/:accountNum", accountController.getAccountByAccountNum);
-app.post("/api/Accounts/login", accountController.loginAccount);
-app.post("/api/Accounts/create", accountController.createAccount);
-app.put("/api/Accounts/updateBalance/:accountNum", accountController.updateBalance);
-app.delete("/api/Accounts/remove/:id", accountController.deleteAccount);
+// Account routes
+app.get("/api/accounts", accountController.getAllAccounts);
+app.get("/api/accounts/firebaseid/:id", accountController.getAccountById);
+app.get("/api/accounts/:accountNum", accountController.getAccountByAccountNum);
+app.post("/api/accounts/login", accountController.loginAccount);
+app.post("/api/accounts/create", accountController.createAccount);
+app.put("/api/accounts/updateBalance/:accountNum", accountController.updateBalance);
+app.delete("/api/accounts/remove/:id", accountController.deleteAccount);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

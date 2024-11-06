@@ -11,37 +11,37 @@ const ReceiptChoice = () => {
   const handleButtonClick = async (receiptType) => {
     if (receiptType === 'email') {
       const transactionData = {
-        amount: 10, // Replace with the actual transaction amount
-        source_account_id: '4111 1111 1111 1111', // Replace with actual account number
-        sendReceipt: 'email', // Indicate that we want to send the receipt via email
+        amount: 10,
+        source_account_id: '4111 1111 1111 1111',
+        sendReceipt: 'email',
+        transaction_type: 'deposit'
       };
-
-      console.log("Sending transaction data:", transactionData); // Debugging log
-
+  
+      console.log("Sending transaction data:", transactionData);
+  
       try {
-        const response = await fetch('/api/transactions', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(transactionData),
+        const response = await fetch('http://localhost:3000/api/transactions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(transactionData),
         });
 
         const data = await response.json();
-        console.log("Response from server:", data); // Debugging log
-
-        if (data.success) {
-          alert('Receipt sent to your email!');
-          navigate('/nextPage'); // Adjust the navigation as necessary
+        if (response.ok) {
+            alert('Transaction successful! Receipt sent to email.');
+            navigate('/removeCard'); // Navigate to another page on success
         } else {
-          alert(`Failed to send receipt: ${data.message}`);
+            alert(`Error: ${data.message}`);
         }
       } catch (error) {
-        console.error('Error sending receipt:', error);
-        alert('An error occurred while sending the receipt.');
+          console.error('Error sending transaction:', error);
+          alert('An error occurred while sending the transaction.');
       }
     } else {
-      navigate('/removeCard'); // Adjust navigation for other options
+      // Handle other receipt types or actions here
+      navigate('/removeCard'); // Example for other options
     }
   };
 
