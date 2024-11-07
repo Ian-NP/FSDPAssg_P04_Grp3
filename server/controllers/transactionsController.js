@@ -34,6 +34,7 @@ const createTransaction = async (req, res) => {
 
         const userEmail = accountDetails.email; 
 
+        // Check if we need to send an email receipt
         if (req.body.sendReceipt === 'email') {
             try {
                 await sendEmailReceipt(userEmail, customKey, transaction.amount, convertTimestampToDateTime(transaction.transaction_date));
