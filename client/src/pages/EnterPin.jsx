@@ -74,32 +74,21 @@ const EnterPin = ({ accountId }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log("Fetching user data...");
         setIsLoading(true);
-        const fullPin = pin.join('');
+        // navigate('/mainMenu'); // Navigate to the main menu while fetching data
+        const fullPin = pin.join(''); // Join the array to form the complete PIN
+        // accountId is hard-coded
+        const accountId = '4111 1111 1111 1111';
         const accountData = await login(accountId, fullPin);
-    
         if (accountData) {
-            console.log('Account Data:', accountData);
-            if (accountData.account_status === 'frozen') {
-                console.error('Account is frozen. Cannot log in.');
-                alert('Your account is frozen. Please contact support.');
-                setIsLoading(false);
-                return; // Exit the function to prevent further execution
-            }
-            navigate('/mainMenu'); // Move to the main menu if account is not frozen
+            navigate('/mainMenu');
         } else {
             console.error('Invalid PIN entered');
         }
-    
-        setPin(['', '', '', '', '', '']);
+        setPin(['', '', '', '', '', '']); // Clear the PIN
         setIsLoading(false);
     };
-
-    useEffect(() => {
-        if (!isLoading && firstInputRef.current) {
-            firstInputRef.current.focus();
-        }
-    }, [isLoading]);
 
     return (
         isLoading ? (
