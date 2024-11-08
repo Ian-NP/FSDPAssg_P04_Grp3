@@ -17,6 +17,7 @@ import AccountSelectionDeposit from './pages/AccountSelectionDeposit';
 import DepositRules from './pages/DepositRules';
 import DepositCash from './pages/DepositCash';
 import TransactionSummary from './pages/TransactionSummary';
+import FreezeAccount from './pages/FreezeAccount';
 import Exit from "./pages/Exit";
 import './styles/App.css';
 
@@ -41,6 +42,7 @@ const App = () => {
         <Route path="/depositRules" element={<DepositRules />} /> 
         <Route path="/depositCash" element={<DepositCash />} /> 
         <Route path="/transactionSummary" element={<TransactionSummary />} /> 
+        <Route path="/freeze-account/:accountNum" element={<FreezeAccount />} />
       </Routes>
     </>
   );

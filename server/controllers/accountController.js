@@ -1,6 +1,7 @@
 const bcryptjs = require('bcryptjs');
 const Account = require("../models/account");
 const { database } = require('../firebase');
+const { get, ref, update } = require("firebase/database");
 const { updateBalance: updateAccountBalance } = require('../models/account');
 const { sendActiveSessionAlert } = require('../emailService');
 
@@ -39,17 +40,31 @@ const getAccountById = async (req, res) => {
     }
 };
 
-const getAccountByAccountNum = async (req, res) => {
-    const { accountNum } = req.params;
-
-    try {
-        const account = await Account.getAccountByAccountNum(accountNum);
-        return res.status(200).json(account);
-    } catch (error) {
-        console.error("Error retrieving account:", error);
-        return res.status(404).json({ message: error.message });
+const getAccountByAccountNum = async (accountNum) => {
+    console.log(`Searching for account number: "${accountNum}"`); // Log the search
+    const snapshot = await get(ref(database, 'account')); // Ensure you're querying the right path
+    
+    if (!snapshot.exists()) {
+        throw new Error("No accounts found");
     }
+
+    let account;
+    snapshot.forEach((childSnapshot) => {
+        const data = childSnapshot.val();
+        console.log(`Checking account: ${data.account_num}`); // Log each account number for debugging
+        if (data.account_num === accountNum) {
+            account = { id: childSnapshot.key, ...data }; // Include the document key
+        }
+    });
+
+    if (!account) {
+        console.log(`Account not found for: "${accountNum}"`); // Log if not found
+        throw new Error("Account not found");
+    }
+
+    return account; // Return the found account
 };
+
 
 const loginAccount = async (req, res) => {
     const { account_num, password } = req.body;
@@ -61,6 +76,11 @@ const loginAccount = async (req, res) => {
 
     try {
         const account = await Account.login(account_num, password);
+
+         // Check if the account is frozen
+         if (account && account.account_status === 'frozen') {
+            return res.status(403).json({ message: 'Your account is frozen. Please contact support.' });
+        }
         
         // If login is successful, send an active session alert email
         if (account) {
@@ -153,21 +173,32 @@ const deleteAccount = async (req, res) => {
 const freezeAccount = async (req, res) => {
     const { accountNum } = req.params;
 
+    console.log(`Request to freeze account: "${accountNum}"`); // Log the incoming account number
+
     try {
-        const account = await Account.getAccountByAccountNum(accountNum);
+        // Retrieve the account from the database
+        const account = await getAccountByAccountNum(accountNum);
         if (!account) {
             return res.status(404).json({ message: "Account not found." });
         }
 
         // Update the account status to frozen
-        account.account_status = 'frozen'; // Ensure this field exists in your model
-        await account.save(); // Ensure you have a save method in your Account model
+        account.account_status = 'frozen';
+        await updateAccountInDatabase(account); // Update the account in the database
 
         return res.status(200).json({ message: "Account has been frozen successfully." });
     } catch (error) {
         console.error("Error freezing account:", error);
         return res.status(500).json({ message: "Error freezing account.", error: error.message });
     }
+};
+
+// Function to update the account in your database
+const updateAccountInDatabase = async (account) => {
+    // This should contain the logic to update the account in your database
+    await update(ref(database, `account/${account.id}`), { // Update to the right path
+        account_status: account.account_status,
+    });
 };
 
 
