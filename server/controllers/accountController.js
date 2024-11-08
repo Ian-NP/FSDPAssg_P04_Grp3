@@ -64,7 +64,7 @@ const loginAccount = async (req, res) => {
         
         // If login is successful, send an active session alert email
         if (account) {
-            await sendActiveSessionAlert(account.account_name, account.email); // Send the email alert
+            await sendActiveSessionAlert(account.account_name, account.email, account_num); // Send the email alert
             return res.status(200).json({
                 success: true,
                 account,
@@ -150,6 +150,27 @@ const deleteAccount = async (req, res) => {
     }
 };
 
+const freezeAccount = async (req, res) => {
+    const { accountNum } = req.params;
+
+    try {
+        const account = await Account.getAccountByAccountNum(accountNum);
+        if (!account) {
+            return res.status(404).json({ message: "Account not found." });
+        }
+
+        // Update the account status to frozen
+        account.account_status = 'frozen'; // Ensure this field exists in your model
+        await account.save(); // Ensure you have a save method in your Account model
+
+        return res.status(200).json({ message: "Account has been frozen successfully." });
+    } catch (error) {
+        console.error("Error freezing account:", error);
+        return res.status(500).json({ message: "Error freezing account.", error: error.message });
+    }
+};
+
+
 
 
 module.exports = {
@@ -160,4 +181,5 @@ module.exports = {
     createAccount,
     updateBalance,
     deleteAccount,
+    freezeAccount,
 };

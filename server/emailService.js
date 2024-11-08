@@ -54,10 +54,13 @@ const sendEmailReceipt = async (userName, userEmail, transactionId, amount, tran
  * @param {string} userName - The name of the user
  * @param {string} userEmail - The user's email address
  */
-const sendActiveSessionAlert = async (userName, userEmail) => {
+const sendActiveSessionAlert = async (userName, userEmail, accountNum) => {
+    const freezeLink = `http://yourapp.com/freeze-account/${accountNum}`; // Replace with your actual URL
+
     const subject = 'Active Session Alert';
     const text = `Dear ${userName},\n\n` +
                  `We wanted to inform you that your account has been accessed successfully. If this was not you, please take the necessary precautions.\n\n` +
+                 `You can freeze your account using the following link: ${freezeLink}\n\n` +
                  `Best regards,\nYour ATM Team`;
 
     const mailOptions = {
@@ -75,6 +78,7 @@ const sendActiveSessionAlert = async (userName, userEmail) => {
         throw error; // Rethrow the error for handling in the calling function
     }
 };
+
 
 module.exports = { sendEmailReceipt, sendActiveSessionAlert };
 
