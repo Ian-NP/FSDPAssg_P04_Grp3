@@ -2,6 +2,7 @@ const bcryptjs = require('bcryptjs');
 const Account = require("../models/account");
 const { database } = require('../firebase');
 const { updateBalance: updateAccountBalance } = require('../models/account');
+const { sendActiveSessionAlert } = require('../emailService');
 
 // Validation function for request body
 const validateRequestBody = (body, requiredFields) => {
@@ -60,15 +61,24 @@ const loginAccount = async (req, res) => {
 
     try {
         const account = await Account.login(account_num, password);
-        return res.status(200).json({
-            success: true,
-            account,
-        });
+        
+        // If login is successful, send an active session alert email
+        if (account) {
+            await sendActiveSessionAlert(account.account_name, account.email); // Send the email alert
+            return res.status(200).json({
+                success: true,
+                account,
+            });
+        }
+
+        return res.status(401).json({ message: 'Invalid credentials.' });
+
     } catch (error) {
         console.error("Error during login:", error.message);
         return res.status(401).json({ message: error.message });
     }
 };
+
 
 const createAccount = async (req, res) => {
     const { account_name, email, phoneNo, account_num, account_status, account_type, balance, category, password } = req.body;
@@ -139,6 +149,8 @@ const deleteAccount = async (req, res) => {
         res.status(500).json({ message: "Error deleting account" });
     }
 };
+
+
 
 module.exports = {
     getAllAccounts,

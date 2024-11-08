@@ -49,6 +49,33 @@ const sendEmailReceipt = async (userName, userEmail, transactionId, amount, tran
     }
 };
 
+/**
+ * Send an email alert for an active session
+ * @param {string} userName - The name of the user
+ * @param {string} userEmail - The user's email address
+ */
+const sendActiveSessionAlert = async (userName, userEmail) => {
+    const subject = 'Active Session Alert';
+    const text = `Dear ${userName},\n\n` +
+                 `We wanted to inform you that your account has been accessed successfully. If this was not you, please take the necessary precautions.\n\n` +
+                 `Best regards,\nYour ATM Team`;
+
+    const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: userEmail,
+        subject: subject,
+        text: text
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+        console.log("Active session alert email sent successfully to:", userEmail);
+    } catch (error) {
+        console.error("Error sending active session alert email:", error);
+        throw error; // Rethrow the error for handling in the calling function
+    }
+};
+
+module.exports = { sendEmailReceipt, sendActiveSessionAlert };
 
 
-module.exports = { sendEmailReceipt };
