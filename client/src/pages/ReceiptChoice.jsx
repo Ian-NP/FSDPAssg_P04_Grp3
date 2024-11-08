@@ -44,7 +44,6 @@ const ReceiptChoice = () => {
                 setLoading(false); // Set loading to false when the request completes
 
                 if (response.ok) {
-                    alert('Receipt sent successfully!'); // Notify the user
                     navigate('/removeCard'); // Navigate to another page on success
                 } else {
                     alert(`Error: ${data.message}`);
@@ -73,7 +72,6 @@ const ReceiptChoice = () => {
                         <Button label="No (Show my balance)" onClick={() => handleButtonClick('show')} size="large" />
                         <Button label="Yes" onClick={() => handleButtonClick('yes')} size="large" />
                         <Button label="Yes (Email)" onClick={() => handleButtonClick('email')} size="large" />
-                        <Button label="Yes (SMS)" onClick={() => handleButtonClick('sms')} size="large" />
                     </div>
                 </div>
             </main>
