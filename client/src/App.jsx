@@ -43,11 +43,8 @@ const App = () => {
         <Route path="/depositRules" element={<DepositRules />} /> 
         <Route path="/depositCash" element={<DepositCash />} /> 
         <Route path="/transactionSummary" element={<TransactionSummary />} /> 
-<<<<<<< HEAD
         <Route path="/preOrderWithdrawal" element={<PreOrderWithdrawal />} />
-=======
         <Route path="/freeze-account/:accountNum" element={<FreezeAccount />} />
->>>>>>> 2f42c70ed20f7f29df4848f46991a9e6afdb4b2b
       </Routes>
     </>
   );
