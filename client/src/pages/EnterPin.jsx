@@ -10,44 +10,38 @@ const EnterPin = ({ accountId }) => {
     const [pin, setPin] = useState(['', '', '', '', '', '']);
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
-    const firstInputRef = useRef(null); // Create a ref for the first input
+    const firstInputRef = useRef(null);
 
     useEffect(() => {
         const handleGlobalKeyDown = (e) => {
             if (e.key === 'Enter') {
-                const isPinComplete = pin.every((digit) => digit !== ''); // Check if all inputs are filled
+                const isPinComplete = pin.every((digit) => digit !== '');
                 if (isPinComplete) {
-                    handleSubmit(e); // Call handleSubmit if the PIN is complete
+                    handleSubmit(e);
                 } else {
-                    console.warn('Please fill in all PIN fields.'); // Optional: Log a warning
+                    console.warn('Please fill in all PIN fields.');
                 }
             }
         };
 
-        // Add event listener for keydown events
         document.addEventListener('keydown', handleGlobalKeyDown);
-
-        // Cleanup the event listener on component unmount
         return () => {
             document.removeEventListener('keydown', handleGlobalKeyDown);
         };
-    }, [pin]); // Add pin as a dependency to ensure the latest state is used
+    }, [pin]);
 
     const handleChange = (e, index) => {
         const value = e.target.value;
 
-        // Allow only numeric input
         if (/^\d*$/.test(value) && value.length <= 1) {
             const newPin = [...pin];
-            newPin[index] = value; // Update the specific digit
+            newPin[index] = value;
             setPin(newPin);
 
-            // Move focus to the next input field if it's not the last one
             if (value && index < pin.length - 1) {
                 const nextInput = document.querySelector(`input[name="pin-${index + 1}"]`);
                 if (nextInput.value === '') {
                     nextInput.focus();
-                    // Set cursor to the end of the value
                     setTimeout(() => {
                         nextInput.setSelectionRange(nextInput.value.length, nextInput.value.length);
                     }, 0);
@@ -61,7 +55,6 @@ const EnterPin = ({ accountId }) => {
             const nextInput = document.querySelector(`input[name="pin-${index + 1}"]`);
             if (nextInput) {
                 nextInput.focus();
-                // Set cursor to the end of the value
                 setTimeout(() => {
                     nextInput.setSelectionRange(nextInput.value.length, nextInput.value.length);
                 }, 0);
@@ -72,7 +65,6 @@ const EnterPin = ({ accountId }) => {
             const prevInput = document.querySelector(`input[name="pin-${index - 1}"]`);
             if (prevInput) {
                 prevInput.focus();
-                // Set cursor to the end of the value
                 setTimeout(() => {
                     prevInput.setSelectionRange(prevInput.value.length, prevInput.value.length);
                 }, 0);
@@ -83,30 +75,20 @@ const EnterPin = ({ accountId }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         console.log("Fetching user data...");
-
         setIsLoading(true);
         // navigate('/mainMenu'); // Navigate to the main menu while fetching data
         const fullPin = pin.join(''); // Join the array to form the complete PIN
         // accountId is hard-coded
         const accountId = '4111 1111 1111 1111';
         const accountData = await login(accountId, fullPin);
-
         if (accountData) {
             navigate('/mainMenu');
         } else {
             console.error('Invalid PIN entered');
         }
-
         setPin(['', '', '', '', '', '']); // Clear the PIN
         setIsLoading(false);
     };
-
-    // Auto-focus on the first input when not loading
-    useEffect(() => {
-        if (!isLoading && firstInputRef.current) {
-            firstInputRef.current.focus();
-        }
-    }, [isLoading]); // Focus on the first input when isLoading changes
 
     return (
         isLoading ? (
@@ -120,15 +102,14 @@ const EnterPin = ({ accountId }) => {
                         {pin.map((_, index) => (
                             <input
                                 key={index}
-                                type="password" // Change to password type to show asterisks
+                                type="password"
                                 name={`pin-${index}`}
                                 value={pin[index]}
                                 onChange={(e) => handleChange(e, index)}
                                 onKeyDown={(e) => handleKeyDown(e, index)}
-                                placeholder="" // Set placeholder to empty
-                                maxLength="1" // Limit to one character
+                                maxLength="1"
                                 className={styles.pinBox}
-                                ref={index === 0 ? firstInputRef : null} // Set ref only for the first input
+                                ref={index === 0 ? firstInputRef : null}
                             />
                         ))}
                     </form>

@@ -16,7 +16,7 @@ const Withdrawal = () => {
     setAmount("0.00");
   };
 
-  const handleConfirm = async () => { // Make this function asynchronous
+  const handleConfirm = async () => {
     console.log("Confirm button clicked with amount:", amount);
 
     // Validate the amount
@@ -47,7 +47,14 @@ const Withdrawal = () => {
                 const response = await axios.post('http://localhost:3000/api/transactions', transactionData);
                 if (response.data.success) {
                     console.log("Transaction created successfully:", response.data);
-                    navigate("/receiptChoice"); // Navigate to receipt choice page on success
+                    // Navigate to ReceiptChoice and pass transaction data
+                    navigate("/receiptChoice", { 
+                        state: { 
+                            transactionType: "withdrawal", 
+                            amount: parseInt(amount), 
+                            email: accountDetails.email // Pass the user's email
+                        } 
+                    }); 
                 } else {
                     alert("An error occurred while recording the transaction. Please try again.");
                 }
@@ -61,15 +68,13 @@ const Withdrawal = () => {
     }
 };
 
-
-
-  const handleAmountChange = (e) => {
+const handleAmountChange = (e) => {
     setAmount(e.target.value);
-  };
+};
 
-  const isAmountZero = amount === "0.00" || amount === "";
+const isAmountZero = amount === "0.00" || amount === "";
 
-  return (
+return (
     <div className={commonStyles['atm-container']}>
       <Header />
       <main className={styles['withdrawal-main']}>

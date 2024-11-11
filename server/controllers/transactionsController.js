@@ -22,10 +22,14 @@ const createTransaction = async (req, res) => {
 
     try {
         const snapshot = await get(ref(database, 'transactions'));
-        const transactionCount = snapshot.size || 0;
-        const customKey = `transaction_id_${transactionCount + 1}`;
+        const transactionCount = snapshot.size || 0; // Get the count of existing transactions
+        const customKey = transactionCount + 1; // Increment ID by one
 
-        await set(ref(database, `transactions/${customKey}`), transaction);
+        // Prepare the transaction data with the new ID
+        await set(ref(database, `transactions/${customKey}`), {
+            ...transaction,
+            id: customKey // Store the ID as part of the transaction data
+        });
 
         const accountDetails = await Account.getAccountByAccountNum(accountNum);
         if (!accountDetails) {
@@ -33,11 +37,14 @@ const createTransaction = async (req, res) => {
         }
 
         const userEmail = accountDetails.email; 
+        const userName = accountDetails.account_name; 
 
+        // Check if we need to send an email receipt
         if (req.body.sendReceipt === 'email') {
             try {
-                await sendEmailReceipt(userEmail, customKey, transaction.amount, convertTimestampToDateTime(transaction.transaction_date));
+                await sendEmailReceipt(userName, userEmail, customKey, transaction.amount, convertTimestampToDateTime(transaction.transaction_date), transaction.transaction_type);
             } catch (emailError) {
+                console.error("Failed to send email receipt:", emailError);
                 return res.status(500).send({
                     success: false,
                     message: "Failed to send email receipt.",
@@ -48,11 +55,12 @@ const createTransaction = async (req, res) => {
 
         res.status(201).send({
             success: true,
-            id: customKey,
+            id: customKey, // Return the simple numeric ID
             ...transaction,
             transaction_date: convertTimestampToDateTime(transaction.transaction_date)
         });
     } catch (error) {
+        console.error("An error occurred while creating the transaction:", error);
         res.status(500).send({
             success: false,
             message: "An error occurred while creating the transaction.",
@@ -60,6 +68,9 @@ const createTransaction = async (req, res) => {
         });
     }
 };
+
+
+
 
 const getAllTransactions = async (req, res) => {
     try {

@@ -1,0 +1,165 @@
+.container {
+  font-family: Arial, sans-serif;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+h3 {
+  white-space: nowrap;
+}
+
+.logo {
+  width: 80px;
+}
+
+.logout {
+  color: #0066cc;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.welcomeSection {
+  text-align: left;
+  margin-top: 20px;
+}
+
+.welcomeSection h2 {
+  font-size: 22px;
+  color: #333;
+}
+
+.welcomeSection p {
+  color: #666;
+  font-size: 14px;
+}
+
+.actionButtons {
+  display: flex;
+  justify-content: space-around;
+  margin: 20px 0;
+}
+
+.actionButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Aligns icon and text vertically */
+  justify-content: center; /* Centers content horizontally */
+  background-color: #f2f2f2;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+  flex: 1;
+  margin: 0 5px;
+  transition: background-color 0.2s ease;
+  text-align: center;
+}
+
+.icon {
+  width: 60px; /* Set a common width */
+  height: 24px; /* Set a common height */
+}
+
+.actionButton:hover {
+  background-color: #e6e6e6;
+}
+
+.accountSection {
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  margin-top: 15px;
+}
+
+.accountCard {
+  text-align: left;
+}
+
+.accountHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.accountDetails h3 {
+  margin: 0;
+}
+
+.accountDetails p {
+  margin: 0;
+  font-size: 14px; /* Optional: Make the font smaller to distinguish it */
+  color: #666; /* Optional: Adjust color for contrast */
+}
+
+.accountType {
+  background-color: #f2b8a2;
+  color: #fff;
+  padding: 12px 10px;
+  border-radius: 50%;
+  font-size: 14px;
+  margin-right: 10px;
+}
+
+.balance {
+  display: flex;
+  justify-content: space-between;
+  color: #333;
+  margin: 10px 0;
+}
+
+.balanceAmount {
+  font-weight: bold;
+  color: #333;
+}
+
+.cardInfo {
+  display: flex;
+  justify-content: space-between;
+  color: #777;
+  font-size: 14px;
+}
+
+.recentTransactions {
+  margin-top: 20px;
+  font-size: 16px;
+  color: #333;
+  font-weight: bold;
+  text-align: left;
+}
+
+.bottomNav {
+  display: flex;
+  justify-content: space-between;
+  background-color: #f2f2f2;
+  padding: 10px 0;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  max-width: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.navButton {
+  flex: 1;
+  border: none;
+  background: none;
+  font-size: 9px;
+  color: #555;
+  cursor: pointer;
+}
+
+.navButton:hover {
+  color: #333;
+  font-weight: bold;
+}

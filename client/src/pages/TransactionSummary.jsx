@@ -51,7 +51,7 @@ const TransactionSummary = () => {
                     source_account_id: accountDetails.account_num,
                     status: "Completed",
                     transaction_date: Date.now(), // Use current datetime as epoch
-                    transaction_type: "deposit"
+                    transaction_type: "deposit" // Change this based on your logic
                 };
     
                 // Make POST request to log the transaction
@@ -59,7 +59,8 @@ const TransactionSummary = () => {
                     const response = await axios.post('http://localhost:3000/api/transactions', transactionData);
                     if (response.data.success) {
                         console.log("Transaction created successfully:", response.data);
-                        navigate('/transactionComplete'); // Navigate to transaction complete page
+                        // Navigate to ReceiptChoice and pass transaction data
+                        navigate('/receiptChoice', { state: { transactionType: "deposit", amount } }); 
                     } else {
                         alert("An error occurred while recording the transaction. Please try again.");
                     }
@@ -74,7 +75,8 @@ const TransactionSummary = () => {
             console.error("Error during deposit:", error);
             alert("An error occurred during the deposit. Please try again.");
         }
-    };    
+    };
+    
 
 
     return (
