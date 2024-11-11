@@ -9,7 +9,7 @@ import DepositGraphic from "../assets/deposit.svg";
 import MoneyTransferGraphic from "../assets/moneyTransfer.svg";
 import PayBillsGraphic from "../assets/payBills.svg";
 import BalanceEnquiryGraphic from "../assets/balanceEnquiry.svg";
-import PrintStatement from "../assets/printStatement.svg";
+import PreOrderWithdrawalGraphic from "../assets/preOrderWithdrawal.png";
 
 const MainMenu = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -30,7 +30,7 @@ const MainMenu = () => {
                     <MainMenuOption title="Deposit" img={DepositGraphic} link="/AccountSelectionDeposit" />
                     <MainMenuOption title="Monitor Spending" img={BalanceEnquiryGraphic} link="/monitorSpendingQR" />
                     <MainMenuOption title="Balance Enquiry" img={PayBillsGraphic} link="/balanceEnquiry" />
-                    <MainMenuOption title="Print Statement" img={PrintStatement} />
+                    <MainMenuOption title="Pre-Order Cash Withdrawal" img={PreOrderWithdrawalGraphic} link="/preOrderWithdrawal" />
                 </div>
             </div>
         </Layout>
