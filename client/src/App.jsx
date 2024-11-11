@@ -20,6 +20,7 @@ import TransactionSummary from './pages/TransactionSummary';
 import FreezeAccount from './pages/FreezeAccount';
 import Exit from "./pages/Exit";
 import PreOrderWithdrawal from "./pages/PreOrderWithdrawal";
+import ATMDashboard from "./pages/ATMDashboard";
 import './styles/App.css';
 
 const App = () => {
@@ -45,6 +46,7 @@ const App = () => {
         <Route path="/transactionSummary" element={<TransactionSummary />} /> 
         <Route path="/preOrderWithdrawal" element={<PreOrderWithdrawal />} />
         <Route path="/freeze-account/:accountNum" element={<FreezeAccount />} />
+        <Route path="/atm-dashboard" element={<ATMDashboard />} />
       </Routes>
     </>
   );
