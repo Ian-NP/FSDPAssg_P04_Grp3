@@ -1,0 +1,76 @@
+/* ATMDashboard.css */
+
+/* Global Styles */
+.appContainer {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  h1 {
+    font-size: 2rem;
+    color: #333;
+  }
+  
+  /* Visualization Grid */
+  .visualizationsContainer {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+  }
+  
+  .visualizationCard {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+  }
+  
+  .visualizationCard h2 {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  /* Responsive design */
+  @media (max-width: 900px) {
+    .visualizationsContainer {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  
+  @media (max-width: 600px) {
+    .visualizationsContainer {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  .replenishmentTable {
+    width: 100%;
+    overflow-x: auto;
+  }
+  
+  .replenishmentTable table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .replenishmentTable th, .replenishmentTable td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+  }
+  
+  .replenishmentTable th {
+    background-color: #f4f4f4;
+  }
+  
+  .replenishmentTable td {
+    background-color: #fff;
+  }
+  
