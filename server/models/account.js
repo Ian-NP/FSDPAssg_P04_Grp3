@@ -103,6 +103,7 @@ class Account {
                 throw new Error("Account not found");
             }
         } catch (error) {
+            console.log(error);
             console.error("Error retrieving account:", error.message);
             throw new Error("Error retrieving account");
         }
