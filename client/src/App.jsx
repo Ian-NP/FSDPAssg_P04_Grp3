@@ -20,6 +20,9 @@ import TransactionSummary from './pages/TransactionSummary';
 import FreezeAccount from './pages/FreezeAccount';
 import Exit from "./pages/Exit";
 import PreOrderWithdrawal from "./pages/PreOrderWithdrawal";
+import PreOrderWithdrawalScreen from './pages/PreOrderWithdrawalScreen';
+import PreOrderWithdrawalConfirmation from './pages/PreOrderWithdrawalConfirmation';
+import PreOrderQR from './pages/PreOrderQR';
 import './styles/App.css';
 
 const App = () => {
@@ -44,6 +47,9 @@ const App = () => {
         <Route path="/depositCash" element={<DepositCash />} /> 
         <Route path="/transactionSummary" element={<TransactionSummary />} /> 
         <Route path="/preOrderWithdrawal" element={<PreOrderWithdrawal />} />
+        <Route path="/preOrderWithdrawalScreen" element={<PreOrderWithdrawalScreen />} />
+        <Route path="/preOrderWithdrawalConfirmation" element={<PreOrderWithdrawalConfirmation />} />
+        <Route path="/preOrderQR" element={<PreOrderQR />} />
         <Route path="/freeze-account/:accountNum" element={<FreezeAccount />} />
       </Routes>
     </>
