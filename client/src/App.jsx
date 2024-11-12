@@ -24,6 +24,7 @@ import PreOrderWithdrawalScreen from './pages/PreOrderWithdrawalScreen';
 import PreOrderWithdrawalConfirmation from './pages/PreOrderWithdrawalConfirmation';
 import PreOrderQR from './pages/PreOrderQR';
 import ATMDashboard from "./pages/ATMDashboard";
+import LandingPage from './pages/LandingPage';
 import './styles/App.css';
 
 const App = () => {
@@ -32,6 +33,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<InsertCard />} />
         <Route path="/enter-pin" element={<EnterPin />} />
+        <Route path="/landingPage" element={<LandingPage />} />
         <Route path="/mainMenu" element={<MainMenu />} />
         <Route path="/balanceEnquiry" element={<BalanceEnquiry />} />
         <Route path="/monitorSpendingQR" element={<MonitorSpendingQR />} />
