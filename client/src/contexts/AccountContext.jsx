@@ -1,5 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import { ref, onValue, off } from 'firebase/database'; // Firebase imports
+import { database } from "../firebase/firebase";
+
 
 const AccountContext = createContext();
 
@@ -10,6 +13,7 @@ export const AccountProvider = ({ children }) => {
     return savedAccount ? JSON.parse(savedAccount) : {};
   });
   const [pinError, setPinError] = useState('');
+  const [accountStatus, setAccountStatus] = useState(null); // Track the account status
 
   // Function to validate PIN and fetch account details
   const login = async (accountId, pin) => {
@@ -33,6 +37,31 @@ export const AccountProvider = ({ children }) => {
       return false;
     }
   };
+
+  // Function to monitor account status (i.e. if it is frozen)
+  useEffect(() => {
+    if (accountDetails && accountDetails.account_num) {
+      const accountRef = ref(database, `/account/${accountDetails.account_num}/account_status`);
+
+      const handleStatusChange = (snapshot) => {
+        const status = snapshot.val();
+        console.log('Account status retrieved:', status);
+        setAccountStatus(status);
+        
+        if (status === 'frozen') {
+          console.log('Account is frozen, redirecting to login...');
+          // Redirect to login page when account is frozen
+          window.location.href = '/enter-pin'; // Or use navigate('/enter-pin') if using react-router
+        }
+      };
+
+      // Start listening for changes in the account status
+      onValue(accountRef, handleStatusChange);
+
+      // Cleanup listener when component is unmounted or account_num changes
+      return () => off(accountRef, 'value', handleStatusChange);
+    }
+  }, [accountDetails]);
 
   const withdrawFromAccount = async (amount) => {
     console.log('Input account number:', accountDetails.account_num, 'Input amount:', amount);
