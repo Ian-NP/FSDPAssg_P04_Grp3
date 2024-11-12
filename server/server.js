@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const accountController = require('./controllers/accountController');
 const transactionRoutes = require('./models/transactions'); // Using models/transactions for routes
+const ATMController = require('./controllers/atmController');
 
 const app = express();
 
@@ -26,6 +27,12 @@ app.post("/api/accounts/login", accountController.loginAccount);
 app.post("/api/accounts/create", accountController.createAccount);
 app.put("/api/accounts/updateBalance/:accountNum", accountController.updateBalance);
 app.delete("/api/accounts/remove/:id", accountController.deleteAccount);
+
+// ATM routes
+app.get("/api/atm/:atmId", ATMController.getATMDetails);
+app.put("/api/atm/:atmId", ATMController.updateATMNotes);
+app.post("/api/atm/create", ATMController.createATM);
+app.get("/api/atm/:atmId/nearestAtm", ATMController.getNearestOCBCATM);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
