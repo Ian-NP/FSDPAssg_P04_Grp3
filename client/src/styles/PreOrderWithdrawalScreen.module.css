@@ -1,0 +1,180 @@
+.container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.logo {
+    max-width: 100px;
+}
+
+.withdrawalSection h2 {
+    text-align: center;
+    font-size: 24px;
+    margin-top: 10px;
+}
+
+.amountInput {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.amountInput input {
+    font-size: 24px;
+    width: 100px;
+    text-align: center;
+}
+
+.amountInput span {
+    font-size: 18px;
+    margin-left: 5px;
+}
+
+.limit {
+    text-align: center;
+    color: gray;
+    margin: 10px 0;
+}
+
+.locationSection h3 {
+    font-size: 18px;
+    margin-top: 20px;
+}
+
+.dropdowns {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+/* Ensure autocomplete container has relative positioning */
+.autocomplete {
+    position: relative;
+    width: 100%;
+}
+
+/* Style the location input box */
+.autocomplete input {
+    padding: 12px;
+    font-size: 16px;
+    width: 100%;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+}
+
+/* Style the input on focus */
+.autocomplete input:focus {
+    border-color: #007BFF;
+    outline: none;
+    background-color: #f9f9f9;
+}
+
+/* Style the suggestions list */
+.suggestionsList {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    max-height: 150px;
+    overflow-y: auto;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    z-index: 10;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.suggestionItem {
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Hover effect for suggestions */
+.suggestionItem:hover {
+    background-color: #f0f0f0;
+}
+
+/* Style the select dropdown */
+.dropdowns select {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: #fff;
+    transition: border-color 0.3s ease;
+}
+
+.dropdowns select {
+    border-color: #007BFF;
+    outline: none;
+    background-color: #f9f9f9;
+}
+
+.map {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.map img {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+}
+
+.buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.cancelButton, .confirmButton {
+    width: 48%;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+.cancelButton {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.confirmButton {
+    background-color: #d50000;
+    color: white;
+}
+
+.noSpin::-webkit-outer-spin-button,
+.noSpin::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.noSpin {
+    -moz-appearance: textfield; /* For Firefox */
+}
+
+.amountInput input::placeholder {
+    font-size: 15px;
+    text-align: left;
+    justify-content: center;
+    align-items: center;
+}

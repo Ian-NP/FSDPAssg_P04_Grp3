@@ -12,9 +12,19 @@ import PayTransferGraphic from '../assets/PayTransfer.svg';
 import RewardGraphic from '../assets/Reward.svg';
 import MoreGraphic from '../assets/More.svg';
 
+import { useNavigate } from 'react-router-dom';
+
 const PreOrderWithdrawal = () => {
+
+    const navigate = useNavigate();
+
+    const onProceed = () => {
+    navigate('/PreOrderWithdrawalScreen');
+  };
+    
     return (
         <Layout>
+
             <div className={styles.container}>
                 {/* Welcome Message */}
                 <section className={styles.welcomeSection}>
@@ -30,7 +40,7 @@ const PreOrderWithdrawal = () => {
                     <button className={styles.actionButton}>
                     <img src={ScanPayGraphic} alt="ScanPay Icon" className={styles.icon} />
                     Scan & Pay</button>
-                    <button className={styles.actionButton}>
+                    <button className={styles.actionButton} onClick={onProceed}>
                     <img src={PreOrderWithdrawalGraphic} alt="PreOrderWithdrawal Icon" className={styles.icon} />
                     Pre-Order Withdrawal</button>
                 </section>
