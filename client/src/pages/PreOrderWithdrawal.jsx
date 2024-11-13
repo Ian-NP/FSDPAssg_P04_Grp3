@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import styles from '../styles/PreOrderWithdrawal.module.css';
 import Layout from '../components/Layout';
 
@@ -16,33 +17,49 @@ import { useNavigate } from 'react-router-dom';
 
 const PreOrderWithdrawal = () => {
     const navigate = useNavigate();
-    const [isMobile, setIsMobile] = useState(false);
 
-    const onProceed = () => {
-        navigate('/PreOrderWithdrawalScreen');
-    };
+    const [amount, setAmount] = useState('');
+    const [accountBalance, setAccountBalance] = useState(null);
+    const [accountName, setAccountName] = useState('');
+    const [accountType, setAccountType] = useState('');
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    // Function to check if the viewport width is mobile-sized (up to 430px)
-    const checkMobileView = () => {
-        const isMobileView = window.matchMedia('(max-width: 430px)').matches;
-        setIsMobile(isMobileView);
-        console.log(`Viewport check: ${isMobileView ? 'Mobile view' : 'Desktop view'}`);
-    };
+    const accountNum = '4111 1111 1111 1111'; // Example account number
+    const password = '112233'
 
     useEffect(() => {
-        checkMobileView(); // Initial check on load
-        window.addEventListener('resize', checkMobileView); // Listen for resizing
-
-        // Cleanup event listener on component unmount
-        return () => window.removeEventListener('resize', checkMobileView);
-    }, []);
-
-    // Only render the component if on a mobile-sized screen
-    if (!isMobile) return null;
+        const fetchAccountDetails = async () => {
+            try {
+                const response = await axios.post("http://localhost:3000/api/accounts/login", {
+                    account_num: accountNum,
+                    password: password,
+                });
     
+                // Handle successful login response
+                if (response.data.success) {
+                    const account = response.data.account;
+                    console.log(account)
+                    setAccountBalance(account.balance);
+                    setAccountName(account.account_name);
+                    setAccountType(account.account_type);
+                }
+            } catch (error) {
+                setError("Error logging in");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchAccountDetails();
+    }, [accountNum]);
+
+    const onProceed = () => {
+        navigate('/PreOrderWithdrawalScreen', { state: { accountBalance } });
+    };
+
     return (
         <Layout>
-
             <div className={styles.container}>
                 {/* Welcome Message */}
                 <section className={styles.welcomeSection}>
@@ -53,33 +70,38 @@ const PreOrderWithdrawal = () => {
                 {/* Action Buttons */}
                 <section className={styles.actionButtons}>
                     <button className={styles.actionButton}>
-                    <img src={PayNowGraphic} alt="PayNow Icon" className={styles.icon} />
-                    PayNow</button>
+                        <img src={PayNowGraphic} alt="PayNow Icon" className={styles.icon} />
+                        PayNow
+                    </button>
                     <button className={styles.actionButton}>
-                    <img src={ScanPayGraphic} alt="ScanPay Icon" className={styles.icon} />
-                    Scan & Pay</button>
+                        <img src={ScanPayGraphic} alt="ScanPay Icon" className={styles.icon} />
+                        Scan & Pay
+                    </button>
                     <button className={styles.actionButton} onClick={onProceed}>
-                    <img src={PreOrderWithdrawalGraphic} alt="PreOrderWithdrawal Icon" className={styles.icon} />
-                    Pre-Order Withdrawal</button>
+                        <img src={PreOrderWithdrawalGraphic} alt="PreOrderWithdrawal Icon" className={styles.icon} />
+                        Pre-Order Withdrawal
+                    </button>
                 </section>
 
                 {/* Account Information */}
                 <section className={styles.accountSection}>
                     <div className={styles.accountCard}>
                         <div className={styles.accountHeader}>
-                            <span className={styles.accountType}>FRA</span>
                             <div className={styles.accountDetails}>
-                                <h3>FRANK Account</h3>
-                                <p>717-473835-009</p>
+                                <h3>{accountName}</h3>
                             </div>
                         </div>
                         <div className={styles.balance}>
                             <span>Available balance</span>
-                            <span className={styles.balanceAmount}>150.82 SGD</span>
+                            <span className={styles.balanceAmount}>
+                                {loading ? 'Loading...' : `${accountBalance} SGD`}
+                            </span>
                         </div>
                         <div className={styles.cardInfo}>
                             <span>Debit card no.</span>
-                            <span>4142 8573 5838 9583</span>
+                            <div className={styles.accountDetails}>
+                                <p>{accountNum}</p>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -87,26 +109,31 @@ const PreOrderWithdrawal = () => {
                 {/* Recent Transactions */}
                 <section className={styles.recentTransactions}>
                     <h4>Most recent transactions</h4>
-                    {/* Transactions list can go here */}
+                    {/* You can populate transactions here */}
                 </section>
 
                 {/* Bottom Navigation */}
                 <nav className={styles.bottomNav}>
                     <button className={styles.navButton}>
-                    <img src={HomeGraphic} alt="Home Icon" className={styles.icon} />
-                    Home</button>
+                        <img src={HomeGraphic} alt="Home Icon" className={styles.icon} />
+                        Home
+                    </button>
                     <button className={styles.navButton}>
-                    <img src={PlanGraphic} alt="Plan Icon" className={styles.icon} />
-                    Plan</button>
+                        <img src={PlanGraphic} alt="Plan Icon" className={styles.icon} />
+                        Plan
+                    </button>
                     <button className={styles.navButton}>
-                    <img src={PayTransferGraphic} alt="PayTransfer Icon" className={styles.icon} />
-                    Pay & Transfer</button>
+                        <img src={PayTransferGraphic} alt="PayTransfer Icon" className={styles.icon} />
+                        Pay & Transfer
+                    </button>
                     <button className={styles.navButton}>
-                    <img src={RewardGraphic} alt="Reward Icon" className={styles.icon} />
-                    Rewards</button>
+                        <img src={RewardGraphic} alt="Reward Icon" className={styles.icon} />
+                        Rewards
+                    </button>
                     <button className={styles.navButton}>
-                    <img src={MoreGraphic} alt="More Icon" className={styles.icon} />
-                    More</button>
+                        <img src={MoreGraphic} alt="More Icon" className={styles.icon} />
+                        More
+                    </button>
                 </nav>
             </div>
         </Layout>
