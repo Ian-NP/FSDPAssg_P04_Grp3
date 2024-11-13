@@ -75,30 +75,73 @@ const loginAccount = async (req, res) => {
     }
 
     try {
-        const account = await Account.login(account_num, password);
+        const accountRef = ref(database, 'account');
+        const snapshot = await get(accountRef);
 
-         // Check if the account is frozen
-         if (account && account.account_status === 'frozen') {
+        let account = null;
+        snapshot.forEach((childSnapshot) => {
+            const data = childSnapshot.val();
+            if (data.account_num === account_num) {
+                account = { id: childSnapshot.key, ...data };
+            }
+        });
+
+        if (!account) {
+            return res.status(404).json({ message: 'Account not found' });
+        }
+
+        // Check if the account is frozen
+        if (account.account_status === 'frozen') {
             return res.status(403).json({ message: 'Your account is frozen. Please contact support.' });
         }
-        
-        // If login is successful, send an active session alert email
-        if (account) {
-            await sendActiveSessionAlert(account.account_name, account.email, account_num); // Send the email alert
+
+        // Check if the password is correct
+        const isPasswordValid = await bcryptjs.compare(password, account.password);
+
+        if (isPasswordValid) {
+            // Reset failed attempts to 0 upon successful login
+            await update(ref(database, `account/${account.id}`), {
+                failed_attempts: 0,
+            });
+
+            // Send the active session alert email here
+            try {
+                await sendActiveSessionAlert(account.account_name, account.email, account.account_num);
+                console.log("Email sent successfully");
+            } catch (emailError) {
+                console.error("Error sending email:", emailError);
+            }
+
             return res.status(200).json({
                 success: true,
                 account,
             });
+        } else {
+            // Increment failed attempts
+            const failedAttempts = (account.failed_attempts || 0) + 1;
+
+            if (failedAttempts >= 4) {
+                // Freeze account after 4 failed attempts
+                await update(ref(database, `account/${account.id}`), {
+                    failed_attempts: failedAttempts,
+                    account_status: 'frozen',
+                });
+
+                return res.status(403).json({ message: 'Your account is now frozen due to too many failed login attempts.' });
+            } else {
+                // Update failed attempts
+                await update(ref(database, `account/${account.id}`), {
+                    failed_attempts: failedAttempts,
+                });
+
+                return res.status(401).json({ message: 'Invalid credentials.' });
+            }
         }
-
-        return res.status(401).json({ message: 'Invalid credentials.' });
-
     } catch (error) {
         console.error("Error during login:", error.message);
         return res.status(401).json({ message: error.message });
     }
 };
-
 
 const createAccount = async (req, res) => {
     const { account_name, email, phoneNo, account_num, account_status, account_type, balance, category, password } = req.body;
