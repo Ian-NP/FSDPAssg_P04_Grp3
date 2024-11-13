@@ -18,25 +18,49 @@ export const AccountProvider = ({ children }) => {
   // Function to validate PIN and fetch account details
   const login = async (accountId, pin) => {
     console.log('Input accountId:', accountId, 'Input pin:', pin);
-  
+
     try {
-      const response = await axios.post('http://localhost:3000/api/Accounts/login', { account_num: accountId, password: pin });
-      console.log('Full response:', response);
-      if (response.data.success) {
-        console.log('Account data:', response.data.account);
-        setAccountDetails(response.data.account);
-        // Store in sessionStorage
-        sessionStorage.setItem('accountDetails', JSON.stringify(response.data.account));
-        return true;
-      } else {
-        setPinError('Invalid PIN. Please try again.');
-      }
+        const response = await axios.post('http://localhost:3000/api/Accounts/login', { account_num: accountId, password: pin });
+        console.log('Full response:', response);
+
+        if (response.data.success) {
+            console.log('Account data:', response.data.account);
+            setAccountDetails(response.data.account);
+            sessionStorage.setItem('accountDetails', JSON.stringify(response.data.account));
+            return true;
+        } else {
+            // Handle specific error messages based on API response
+            if (response.data.error === 'ACCOUNT_LOCKED') {
+                setPinError('Your account is locked. Please contact support.');
+            } else if (response.data.error === 'ACCOUNT_FROZEN') { // Check for frozen account specifically
+                setPinError('Your account is frozen. Please contact support.');
+            } else if (response.data.error === 'INVALID_PIN') {
+                setPinError('Invalid PIN. Please try again.');
+            } else {
+                setPinError(response.data.error || 'An error occurred. Please try again later.');
+            }
+            return false;
+        }
     } catch (error) {
-      console.error('Error validating PIN:', error);
-      setPinError('An error occurred. Please try again later.');
-      return false;
+        console.error('Error validating PIN:', error);
+        
+        // Specifically handle the 401 Unauthorized for invalid PIN
+        if (error.response && error.response.status === 401) {
+            setPinError('Invalid PIN. Please try again.');
+        } else if (error.response && error.response.status === 403) {
+            // Handle frozen account
+            setPinError('Your account is frozen. Please contact support.');
+        } else {
+            // For any other server/network errors
+            setPinError('An error occurred while connecting to the server. Please try again later.');
+        }
+        return false;
     }
-  };
+};
+
+
+
+
 
   // Function to monitor account status (i.e. if it is frozen)
   useEffect(() => {

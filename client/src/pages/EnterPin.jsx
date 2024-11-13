@@ -3,10 +3,11 @@ import { useAccount } from '../contexts/AccountContext';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import Loading from './Loading';
+import ErrorMessage from '../components/ErrorMessage'; // Import the ErrorMessage component
 import styles from '../styles/EnterPin.module.css';
 
-const EnterPin = ({ accountId }) => {
-    const { login, pinError } = useAccount();
+const EnterPin = () => {
+    const { login, pinError } = useAccount(); // Get pinError from context
     const [pin, setPin] = useState(['', '', '', '', '', '']);
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
@@ -76,17 +77,15 @@ const EnterPin = ({ accountId }) => {
         e.preventDefault();
         console.log("Fetching user data...");
         setIsLoading(true);
-        // navigate('/mainMenu'); // Navigate to the main menu while fetching data
         const fullPin = pin.join(''); // Join the array to form the complete PIN
-        // accountId is hard-coded
-        const accountId = '4111 1111 1111 1111';
+        const accountId = '4111 1111 1111 1111'; // Test account ID
         const accountData = await login(accountId, fullPin);
+
         if (accountData) {
             navigate('/landingPage');
-        } else {
-            console.error('Invalid PIN entered');
         }
-        setPin(['', '', '', '', '', '']); // Clear the PIN
+
+        setPin(['', '', '', '', '', '']); // Clear the PIN after submitting
         setIsLoading(false);
     };
 
@@ -113,7 +112,7 @@ const EnterPin = ({ accountId }) => {
                             />
                         ))}
                     </form>
-                    {pinError && <p>{pinError}</p>}
+                    <ErrorMessage message={pinError} isFrozen={pinError === 'Your account is frozen. Please contact support.'} /> {/* Show error message */}
                 </div>
             </Layout>
         )
