@@ -27,15 +27,15 @@
 /* Modal Title */
 .title {
     font-size: 24px;
-    color: #333;
+    color: #E11A27;
     font-weight: 700;
     margin-bottom: 10px;
 }
 
 /* Modal Message */
 .message {
-    font-size: 18px;
-    color: #555;
+    font-size: 1.5rem;
+    color: #444;
     margin-bottom: 20px;
 }
 
@@ -50,13 +50,15 @@
 /* ATM Heading */
 .atmHeading {
     font-size: 20px;
-    color: #007BFF;
+    color: #E11A27;
     margin-bottom: 10px;
     text-align: center;
 }
 
 .nearestAtmInfo p {
     text-align: center;
+    font-size: 1.2rem;
+    margin: 0.5rem 0;
 }
 
 /* Loading State */
@@ -76,13 +78,14 @@
 
 .qrCodeContainer h4 {
     font-size: 1.4rem;
-    color: #007BFF;
+    color: #E11A27;
+    margin-top: 0;
     margin-bottom: 10px;
 }
 
 /* Button */
 .button {
-    background-color: #007BFF;
+    background-color: #E11A27;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -94,7 +97,7 @@
 }
 
 .button:hover {
-    background-color: #0056b3;
+    background-color: #bb1823;
 }
 
 .button:focus {

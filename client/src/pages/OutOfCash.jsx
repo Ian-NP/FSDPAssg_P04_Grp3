@@ -64,7 +64,7 @@ const OutOfCash = ({ onClose }) => {
         <div className={styles.overlay}>
             <div className={styles.modal}>
                 <h1 className={styles.title}>Out of Cash</h1>
-                <p className={styles.message}>Sorry, the ATM is out of cash. Please try again later.</p>
+                <p className={styles.message}>Sorry, the ATM is <b>out of cash</b>. Please try again later.</p>
                 
                 {/* Render nearest ATM information */}
                 {renderNearestAtmInfo()}

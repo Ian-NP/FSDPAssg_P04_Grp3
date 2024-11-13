@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from '../styles/PreOrderWithdrawal.module.css';
 import Layout from '../components/Layout';
 
@@ -15,12 +15,30 @@ import MoreGraphic from '../assets/More.svg';
 import { useNavigate } from 'react-router-dom';
 
 const PreOrderWithdrawal = () => {
-
     const navigate = useNavigate();
+    const [isMobile, setIsMobile] = useState(false);
 
     const onProceed = () => {
-    navigate('/PreOrderWithdrawalScreen');
-  };
+        navigate('/PreOrderWithdrawalScreen');
+    };
+
+    // Function to check if the viewport width is mobile-sized (up to 430px)
+    const checkMobileView = () => {
+        const isMobileView = window.matchMedia('(max-width: 430px)').matches;
+        setIsMobile(isMobileView);
+        console.log(`Viewport check: ${isMobileView ? 'Mobile view' : 'Desktop view'}`);
+    };
+
+    useEffect(() => {
+        checkMobileView(); // Initial check on load
+        window.addEventListener('resize', checkMobileView); // Listen for resizing
+
+        // Cleanup event listener on component unmount
+        return () => window.removeEventListener('resize', checkMobileView);
+    }, []);
+
+    // Only render the component if on a mobile-sized screen
+    if (!isMobile) return null;
     
     return (
         <Layout>

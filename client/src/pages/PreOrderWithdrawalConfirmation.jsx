@@ -5,11 +5,10 @@ import SlideButton from '../components/SlideButton';
 import { useNavigate } from 'react-router-dom';
 
 const PreOrderWithdrawalConfirmation = () => {
-    const [amount, setAmount] = useState(null); // State for fetched amount
     const navigate = useNavigate();
 
     const handleCancel = () => {
-        navigate('/'); // Change this if you want to navigate to a specific screen
+        navigate('/'); // Update this path if needed
     };
 
     const handleContinue = () => {
@@ -17,18 +16,9 @@ const PreOrderWithdrawalConfirmation = () => {
     };
 
     const handleSlideComplete = () => {
-        console.log('QR Code Generated'); // You can add your QR code generation logic here
+        console.log('QR Code Generated'); // Add QR code generation logic if needed
         handleContinue();
     };
-
-    useEffect(() => {
-        fetch('http://localhost:3000/get-withdrawal')
-            .then((response) => response.json())
-            .then((data) => setAmount(data.amount))
-            .catch((error) => {
-                console.error('Error fetching amount:', error);
-            });
-    }, []);
 
     return (
         <Layout>
@@ -37,7 +27,7 @@ const PreOrderWithdrawalConfirmation = () => {
                     <div className={styles.row}>
                         <span className={styles.label}>Amount:</span>
                         <span className={styles.value}>
-                            {amount !== null ? `${amount} SGD` : 'Loading...'}
+                            {loading ? 'Loading...' : error ? error : `${amount} SGD`}
                         </span>
                     </div>
                 </section>
