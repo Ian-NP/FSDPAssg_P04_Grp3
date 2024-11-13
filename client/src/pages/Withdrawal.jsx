@@ -54,6 +54,7 @@ const Withdrawal = () => {
             status: "Completed",
             transaction_date: Date.now(), // Current datetime in milliseconds
             transaction_type: "withdrawal",
+            cateogry: "cash",
           };
   
           // Make POST request to log the transaction
