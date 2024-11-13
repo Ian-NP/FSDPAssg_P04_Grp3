@@ -66,7 +66,6 @@ const getAccountByAccountNum = async (accountNum) => {
 };
 
 
-// Login function
 const loginAccount = async (req, res) => {
     const { account_num, password } = req.body;
 
@@ -105,6 +104,14 @@ const loginAccount = async (req, res) => {
                 failed_attempts: 0,
             });
 
+            // Send the active session alert email here
+            try {
+                await sendActiveSessionAlert(account.account_name, account.email, account.account_num);
+                console.log("Email sent successfully");
+            } catch (emailError) {
+                console.error("Error sending email:", emailError);
+            }
+
             return res.status(200).json({
                 success: true,
                 account,
@@ -135,7 +142,6 @@ const loginAccount = async (req, res) => {
         return res.status(401).json({ message: error.message });
     }
 };
-
 
 const createAccount = async (req, res) => {
     const { account_name, email, phoneNo, account_num, account_status, account_type, balance, category, password } = req.body;
