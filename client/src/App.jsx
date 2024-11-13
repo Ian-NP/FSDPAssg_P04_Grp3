@@ -24,7 +24,6 @@ import Exit from './pages/Exit';
 import PreOrderWithdrawal from './pages/PreOrderWithdrawal';
 import PreOrderWithdrawalScreen from './pages/PreOrderWithdrawalScreen';
 import PreOrderWithdrawalConfirmation from './pages/PreOrderWithdrawalConfirmation';
-import PreOrderQR from './pages/PreOrderQR';
 import ATMDashboard from './pages/ATMDashboard';
 import LandingPage from './pages/LandingPage';
 import './styles/App.css';
@@ -59,7 +58,6 @@ const App = () => {
         <Route path="/preOrderWithdrawal" element={<PreOrderWithdrawal />} />
         <Route path="/preOrderWithdrawalScreen" element={<PreOrderWithdrawalScreen />} />
         <Route path="/preOrderWithdrawalConfirmation" element={<PreOrderWithdrawalConfirmation />} />
-        <Route path="/preOrderQR" element={<PreOrderQR />} />
         <Route path="/freeze-account/:accountNum" element={<FreezeAccount />} />
         <Route path="/atm-dashboard" element={<ATMDashboard />} />
       </Routes>
