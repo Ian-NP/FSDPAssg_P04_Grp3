@@ -97,6 +97,8 @@ const EnterPin = () => {
         setIsLoading(false);
     };
 
+    const isAccountFrozen = pinError === 'Your account is frozen. Please contact support.'; // Check if the account is frozen
+
     return (
         isLoading ? (
             <Loading />
@@ -117,13 +119,16 @@ const EnterPin = () => {
                                 maxLength="1"
                                 className={styles.pinBox}
                                 ref={index === 0 ? firstInputRef : null}
+                                disabled={isAccountFrozen} // Disable input when account is frozen
                             />
                         ))}
                     </form>
                     <ErrorMessage message={pinError} isFrozen={pinError === 'Your account is frozen. Please contact support.'} />
                     {/* Only show attempts left if attempts > 0 and an invalid attempt has occurred */}
                     {invalidAttempt && attemptsLeft > 0 && (
-                        <p className={styles.attemptsLeft}>You have {attemptsLeft} {attemptsLeft === 1 ? 'attempt' : 'attempts'} left before your account is locked.</p>
+                        <p className={styles.attemptsLeft}>
+                            You have {attemptsLeft} {attemptsLeft === 1 ? 'attempt' : 'attempts'} left before your account is locked.
+                        </p>
                     )}
                 </div>
             </Layout>
