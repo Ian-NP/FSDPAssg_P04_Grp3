@@ -82,7 +82,7 @@ const EnterPin = ({ accountId }) => {
         const accountId = '4111 1111 1111 1111';
         const accountData = await login(accountId, fullPin);
         if (accountData) {
-            navigate('/mainMenu');
+            navigate('/landingPage');
         } else {
             console.error('Invalid PIN entered');
         }

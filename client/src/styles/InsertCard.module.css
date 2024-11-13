@@ -30,3 +30,70 @@
     color: #333;
     font-weight: bold;
 }
+
+.cashAvailabilityContainer{
+    position: absolute;
+    bottom: 4rem; /* Adjusts the distance from the bottom of the screen */
+    right: 4rem; /* Use `left: 2rem;` for bottom-left positioning */
+    /* right: 2rem; */ /* Uncomment this line and comment `left` for bottom-right positioning */
+}
+
+.cashAvailabilityContainer h2{
+    font-size: 1.5rem;
+    color: #333;
+    font-weight: bold;
+    text-align: center;
+    width: 100%;
+}
+
+.cashLevelsContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+}
+
+.orbContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative; /* Allows absolute positioning for the water level */
+    border: 2px solid #333; /* Thicker border for clarity */
+    width: 125px;
+    height: 125px;
+    border-radius: 50%; /* Make it a perfect circle */
+    overflow: hidden; /* Ensure the water level stays within the circle */
+    background-color: #f0f0f0; /* Background color of the orb */
+}
+
+.waterLevel {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%; /* Fill the entire width of the orb */
+    background: #333; /* Red color that works well with black text */
+    transition: height 0.6s ease-out; /* Smooth transition for water level changes */
+    z-index: 1; /* Ensure it stays behind the text */
+    border-bottom-left-radius: 50%; /* Rounded bottom edges */
+    border-bottom-right-radius: 50%; /* Rounded bottom edges */
+}
+
+.noteLabel,
+.amountLabel {
+    position: relative;
+    z-index: 2; /* Ensures the text stays above the water level */
+    color: #000; /* Minimalist clean black color */
+}
+
+.noteLabel {
+    font-size: 1.6rem; /* Larger font size */
+    font-weight: bold;
+}
+
+.amountLabel {
+    font-size: 1.4rem; /* Larger font size */
+    margin-top: 5px; /* Space between the note label and amount */
+    font-weight: bold;
+}
