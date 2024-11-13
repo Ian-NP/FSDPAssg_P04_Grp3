@@ -3,6 +3,47 @@ const { sendEmailReceipt } = require('../emailService');
 const { ref, get, set, update, remove } = require("firebase/database");
 const { database } = require('../firebase.js');
 
+// THIS CLASS IS ONLY NEEDED FOR ME (IAN)
+class Transaction {
+    constructor({
+        id,
+        amount,
+        email,
+        sendReceipt,
+        source_account_id,
+        transaction_date,
+        transaction_type,
+        category
+    }) {
+        this.id = id; // Unique transaction ID
+        this.amount = amount; // Amount of the transaction
+        this.email = email; // Email associated with the transaction
+        this.sendReceipt = sendReceipt; // Indicates if a receipt should be sent
+        this.source_account_id = source_account_id; // The account number of the source account
+        this.transaction_date = transaction_date; // Date of the transaction in timestamp format
+        this.transaction_type = transaction_type; // Type of transaction (e.g., withdrawal, deposit)
+        this.category = category; // Category of the transaction (e.g., dining, shopping)
+    }
+
+    static convertTimestampToDateTime(timestamp) {
+        const date = new Date(timestamp);
+        return date.toISOString();
+    }
+
+    static validateTransaction(transaction) {
+        const requiredFields = [
+            'id', 'amount', 'email', 'source_account_id',
+            'transaction_date', 'transaction_type', 'category'
+        ];
+        
+        for (const field of requiredFields) {
+            if (!transaction[field] && transaction[field] !== 0) {
+                throw new Error(`${field} is required.`);
+            }
+        }
+    }
+}
+
 const convertTimestampToDateTime = (timestamp) => {
     const date = new Date(timestamp);
     return date.toISOString();
