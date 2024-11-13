@@ -14,6 +14,7 @@ export const AccountProvider = ({ children }) => {
   });
   const [pinError, setPinError] = useState('');
   const [accountStatus, setAccountStatus] = useState(null); // Track the account status
+  const [attemptsLeft, setAttemptsLeft] = useState(3); // Track remaining attempts
 
   // Function to validate PIN and fetch account details
   const login = async (accountId, pin) => {
@@ -27,6 +28,7 @@ export const AccountProvider = ({ children }) => {
             console.log('Account data:', response.data.account);
             setAccountDetails(response.data.account);
             sessionStorage.setItem('accountDetails', JSON.stringify(response.data.account));
+            setAttemptsLeft(4); // Reset attempts on successful login
             return true;
         } else {
             // Handle specific error messages based on API response
@@ -35,7 +37,12 @@ export const AccountProvider = ({ children }) => {
             } else if (response.data.error === 'ACCOUNT_FROZEN') { // Check for frozen account specifically
                 setPinError('Your account is frozen. Please contact support.');
             } else if (response.data.error === 'INVALID_PIN') {
-                setPinError('Invalid PIN. Please try again.');
+                setAttemptsLeft((prev) => prev - 1); // Decrease attempts left on wrong PIN
+                if (attemptsLeft <= 1) {
+                    setPinError('Account locked due to multiple incorrect attempts.');
+                } else {
+                    setPinError(`Invalid PIN. You have ${attemptsLeft - 1} attempts left.`);
+                }
             } else {
                 setPinError(response.data.error || 'An error occurred. Please try again later.');
             }
@@ -57,10 +64,6 @@ export const AccountProvider = ({ children }) => {
         return false;
     }
 };
-
-
-
-
 
   // Function to monitor account status (i.e. if it is frozen)
   useEffect(() => {
@@ -139,13 +142,15 @@ export const AccountProvider = ({ children }) => {
     console.log('Updated accountDetails:', accountDetails);
   }, [accountDetails]);
 
+  
   // Function to reset account context state
   const LogOutAcc = () => {
     setAccountDetails(null);
     setPinError('');
-    // Clear sessionStorage
+    setAttemptsLeft(3); // Reset attempts when logging out
     sessionStorage.removeItem('accountDetails');
   };
+
 
   return (
     <AccountContext.Provider value={{ pinError, login, LogOutAcc, accountDetails, setAccountDetails, withdrawFromAccount, depositAccount }}>

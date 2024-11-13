@@ -10,6 +10,8 @@ const EnterPin = () => {
     const { login, pinError } = useAccount(); // Get pinError from context
     const [pin, setPin] = useState(['', '', '', '', '', '']);
     const [isLoading, setIsLoading] = useState(false);
+    const [attemptsLeft, setAttemptsLeft] = useState(4); // Set initial attempts to 4
+    const [invalidAttempt, setInvalidAttempt] = useState(false); // Track if the first invalid attempt has occurred
     const navigate = useNavigate();
     const firstInputRef = useRef(null);
 
@@ -83,6 +85,12 @@ const EnterPin = () => {
 
         if (accountData) {
             navigate('/landingPage');
+            setAttemptsLeft(4); // Reset attempts to 4 on successful login
+            setInvalidAttempt(false); // Reset invalid attempt state
+        } else {
+            // Decrease attempts on invalid PIN and set invalidAttempt to true to show attempts left message
+            setAttemptsLeft((prev) => Math.max(0, prev - 1));
+            setInvalidAttempt(true);
         }
 
         setPin(['', '', '', '', '', '']); // Clear the PIN after submitting
@@ -112,7 +120,11 @@ const EnterPin = () => {
                             />
                         ))}
                     </form>
-                    <ErrorMessage message={pinError} isFrozen={pinError === 'Your account is frozen. Please contact support.'} /> {/* Show error message */}
+                    <ErrorMessage message={pinError} isFrozen={pinError === 'Your account is frozen. Please contact support.'} />
+                    {/* Only show attempts left if attempts > 0 and an invalid attempt has occurred */}
+                    {invalidAttempt && attemptsLeft > 0 && (
+                        <p>You have {attemptsLeft} {attemptsLeft === 1 ? 'attempt' : 'attempts'} left before your account is locked.</p>
+                    )}
                 </div>
             </Layout>
         )
