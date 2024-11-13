@@ -36,6 +36,7 @@ export const ATMProvider = ({ children }) => {
   const fetchNearestATM = async (atmId) => {
     try {
       const response = await axios.get(`http://localhost:3000/api/atm/${atmId}/nearestAtm`);
+      console.log(response.data);
       return response.data; // Return the nearest ATM data
     } catch (error) {
       console.error('Error fetching nearest ATM:', error);
