@@ -12,6 +12,7 @@ router.get('/:transactionId', transactionsController.getSpecificTransaction);
 router.put('/:id', validateTransactionData, transactionsController.updateTransaction);
 router.delete('/:id', transactionsController.deleteTransaction);
 router.post('/freeze-account/:accountNum', accountController.freezeAccount); 
+router.get('/getTransactionByAccountNum/:accountNum', transactionsController.getTransactionsByAccountNumForSixMonths);
 
 
 module.exports = router;
