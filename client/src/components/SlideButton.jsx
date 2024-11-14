@@ -62,7 +62,7 @@ const SlideButton = ({ onSlideComplete }) => {
     >
       {/* The text remains fixed in the center */}
       <span className={styles.sliderText}>
-        Slide to Generate QR Code
+        Slide to Confirm Withdrawal
       </span>
       
       <div

@@ -1,4 +1,3 @@
-// QRCodeScanner.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import QrScanner from 'react-qr-scanner';
@@ -9,21 +8,41 @@ const QRCodeScanner = () => {
 
   const handleScan = (data) => {
     if (data) {
-      console.log('Scanned Data:', data); // Log the raw data
+      // Log the raw data to check if it's a string or an object
+      console.log('Raw Scanned Data:', data);
+
+      // Check if data is an object with a "text" property
+      const scannedText = typeof data === 'string' ? data : data?.text;
+
+      if (!scannedText) {
+        setError(new Error('QR code did not contain text data'));
+        return;
+      }
+
       try {
-        const { amount, accountDetails } = JSON.parse(data);
+        // Parse the scanned text as JSON
+        const parsedData = JSON.parse(scannedText.trim());
+        const { amount, accountDetails } = parsedData;
+
+        // Check if all required fields are present
+        if (!amount || !accountDetails || !accountDetails.accountName || !accountDetails.accountNum) {
+          throw new Error('Invalid QR code data format');
+        }
+
+        // Navigate with parsed data
         navigate('/PreOrderWithdrawalConfirmation', { state: { amount, accountDetails } });
       } catch (err) {
         setError(new Error('Invalid QR code data format'));
+        console.error('Error parsing QR code data:', err);
       }
     }
-  };  
+  };
 
   const handleError = (err) => {
     setError(err);
     console.error('Scanner error:', err);
   };
-  
+
   return (
     <div style={{ textAlign: 'center', padding: '20px' }}>
       <h2>Scan QR Code</h2>
@@ -32,7 +51,7 @@ const QRCodeScanner = () => {
         delay={300}
         onError={handleError}
         onScan={handleScan}
-        style={{ width: '100%', height: '400px' }}  // Set a height for better visibility
+        style={{ width: '100%', height: '400px' }}
       />
     </div>
   );

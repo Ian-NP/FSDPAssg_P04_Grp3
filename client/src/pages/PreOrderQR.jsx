@@ -13,7 +13,7 @@ const PreOrderQR = () => {
 
     useEffect(() => {
         console.log("State received:", state);
-        
+
         if (!state) {
             console.error("No state data found. Redirecting to previous page.");
             navigate(-1); 
@@ -26,14 +26,17 @@ const PreOrderQR = () => {
             console.log("Account Name:", accountName);
             console.log("Account Number:", accountNum);
 
-            const data = {
-                amount: amount,
-                accountName: accountName,
-                accountNum: accountNum,
-            };
+            // Ensure data matches expected structure in QRCodeScanner
+            const data = JSON.stringify({
+                amount,
+                accountDetails: {
+                    accountName,
+                    accountNum,
+                },
+            });
 
             console.log("Generated Data for QR Code:", data);
-            setQrData(JSON.stringify(data));
+            setQrData(data);
         } else {
             console.warn("Amount or account details are missing.");
         }
