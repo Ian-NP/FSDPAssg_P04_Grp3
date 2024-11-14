@@ -27,11 +27,13 @@ const PreOrderWithdrawal = () => {
 
     const accountNum = '4111 1111 1111 1111'; // Example account number
     const password = '112233'
+    const baseURL = `${window.location.protocol}//${window.location.hostname}:3000`;
+    console.log(baseURL)
 
     useEffect(() => {
         const fetchAccountDetails = async () => {
             try {
-                const response = await axios.post("http://192.168.1.9:3000/api/accounts/login", {
+                const response = await axios.post(`${baseURL}/api/accounts/login`, {
                     account_num: accountNum,
                     password: password,
                 }, {
