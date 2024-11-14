@@ -75,15 +75,17 @@ function getFirstNetworkAddress() {
 console.log('First network address:', getFirstNetworkAddress());
 
 const sendActiveSessionAlert = async (userName, userEmail, accountNum) => {
-    baseUrl = getFirstNetworkAddress();
-    console.log('Base URL:', baseUrl);
-    const freezeLink = `${baseUrl}/freeze-account/${encodeURIComponent(accountNum)}`; // Point to your React route
+    const baseUrl = getFirstNetworkAddress();
+
+    const freezeLink = `${baseUrl}:5173/freeze-account/${encodeURIComponent(accountNum)}`; // Point to your React route
 
     const subject = 'Active Session Alert';
     const text = `Dear ${userName},\n\n` +
                  `We wanted to inform you that your account has been accessed successfully. If this was not you, please take the necessary precautions.\n\n` +
                  `You can freeze your account using the following link: ${freezeLink}\n\n` +
                  `Best regards,\nYour ATM Team`;
+
+    const tempEmail = "iancheif117@gmail.com";
 
     const mailOptions = {
         from: process.env.EMAIL_USER,
