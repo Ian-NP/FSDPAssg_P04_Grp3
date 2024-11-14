@@ -4,6 +4,7 @@ import Layout from '../components/Layout';
 import styles from '../styles/LandingPage.module.css';
 import { useAccount } from '../contexts/AccountContext';
 import BalanceEnquiry from '../assets/balanceEnquiry.svg';
+import PayBillsGraphic from "../assets/payBills.svg";
 import ScanPay from "../assets/ScanPay.svg";
 import axios from 'axios';
 import { useATM } from '../contexts/AtmContext';
@@ -101,6 +102,10 @@ const LandingPage = () => {
         navigate('/balanceEnquiry'); // Replace with the appropriate route or action
     };
 
+    const handleViewSpendingInsightsClick = () => {
+        navigate('/monitorSpendingQR'); // Replace with the appropriate route or action
+    };
+
     const handleMoreServicesClick = () => {
         navigate('/mainMenu'); // Replace with the appropriate route or action
     };
@@ -153,12 +158,12 @@ const LandingPage = () => {
                     <h3>Other services</h3>
                     <div className={styles.otherServiceBtnContainer}>
                         <div className={styles.otherServiceBtn} onClick={handleBalanceEnquiryClick}>
-                            <img src={BalanceEnquiry} alt="Balance Enquiry" />
+                            <img src={PayBillsGraphic} alt="Balance Enquiry" />
                             <p>Ask about Balance</p>
                         </div>
-                        <div className={styles.otherServiceBtn}>
-                            <img src={ScanPay} alt="Transfer Funds" />
-                            <p>QR code to withdraw</p>
+                        <div className={styles.otherServiceBtn} onClick={handleViewSpendingInsightsClick}>
+                            <img src={BalanceEnquiry} alt="View Spending Insights" />
+                            <p>Spending Insights</p>
                         </div>
                     </div>
                     <button 
