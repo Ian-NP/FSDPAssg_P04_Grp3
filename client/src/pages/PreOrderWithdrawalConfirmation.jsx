@@ -22,14 +22,12 @@ const PreOrderWithdrawalConfirmation = () => {
     }, [accountDetails, amount]);
 
     const handleContinue = () => {
-        if (balanceCheck === 'sufficient') {
-            navigate('/PreOrderQR', {
-                state: {
-                    amount, 
-                    accountDetails
-                }
-            });
-        }
+        navigate('/ReceiptChoice', {
+            state: {
+                amount, 
+                accountDetails
+            }
+        });
     };
 
     const handleSlideComplete = () => {

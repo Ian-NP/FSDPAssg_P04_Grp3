@@ -22,7 +22,7 @@ const PreOrderWithdrawalScreen = () => {
             // Check if the entered amount is divisible by 10 or 50
             if (amount % 10 === 0 || amount % 50 === 0) {
                 // Passing amount and accountBalance to the confirmation page
-                navigate('/PreOrderWithdrawalConfirmation', {
+                navigate('/PreOrderQR', {
                     state: {
                         amount,
                         accountDetails: { balance: accountBalance, accountName, accountNum }
