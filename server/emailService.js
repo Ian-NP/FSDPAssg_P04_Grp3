@@ -54,8 +54,9 @@ const sendEmailReceipt = async (userName, userEmail, transactionId, amount, tran
  * @param {string} userName - The name of the user
  * @param {string} userEmail - The user's email address
  */
-const sendActiveSessionAlert = async (userName, userEmail, accountNum) => {
-    const freezeLink = `http://localhost:5173/freeze-account/${encodeURIComponent(accountNum)}`; // Point to your React route
+const sendActiveSessionAlert = async (userName, userEmail, accountNum, baseUrl) => {
+    const freezeLink = `${baseUrl}/freeze-account/${encodeURIComponent(accountNum)}`; // Point to your React route
+
 
     const subject = 'Active Session Alert';
     const text = `Dear ${userName},\n\n` +

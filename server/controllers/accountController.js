@@ -69,6 +69,15 @@ const getAccountByAccountNum = async (accountNum) => {
 const loginAccount = async (req, res) => {
     const { account_num, password } = req.body;
 
+    // Get the base URL of the frontend
+    const referer = req.headers.referer || req.headers.origin;
+    let baseUrl = null;
+    
+    if (referer) {
+        const parsedUrl = new URL(referer);
+        baseUrl = `${parsedUrl.protocol}//${parsedUrl.hostname}`;
+    }
+
     const validationError = validateRequestBody(req.body, ['account_num', 'password']);
     if (validationError) {
         return res.status(400).json({ message: validationError });
@@ -106,7 +115,7 @@ const loginAccount = async (req, res) => {
 
             // Send the active session alert email here
             try {
-                await sendActiveSessionAlert(account.account_name, account.email, account.account_num);
+                await sendActiveSessionAlert(account.account_name, account.email, account.account_num, baseUrl);
                 console.log("Email sent successfully");
             } catch (emailError) {
                 console.error("Error sending email:", emailError);
