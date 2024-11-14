@@ -7,9 +7,10 @@ const FreezeAccount = () => {
     useEffect(() => {
         const freezeAccount = async () => {
             console.log(`Request to freeze account: "${accountNum}"`); // Log the incoming account number
+            const baseURL = `${window.location.protocol}//${window.location.hostname}:3000`; // Get the base URL
 
             try {
-                const response = await fetch(`http://localhost:3000/api/transactions/freeze-account/${encodeURIComponent(accountNum)}`, {
+                const response = await fetch(`${baseURL}/api/transactions/freeze-account/${encodeURIComponent(accountNum)}`, {
                     method: 'POST', // Use POST method as defined in your API
                 });
 
