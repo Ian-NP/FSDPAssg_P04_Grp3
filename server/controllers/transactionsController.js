@@ -1,8 +1,9 @@
+const Account = require('../models/account');
+const { sendEmailReceipt } = require('../emailService'); 
 const { ref, get, set, update, remove } = require("firebase/database");
 const { database } = require('../firebase.js');
-const { sendEmailReceipt } = require('../emailService');
-const Account = require('../models/account');
 
+// THIS CLASS IS ONLY NEEDED FOR ME (IAN)
 class Transaction {
     constructor({
         id,
@@ -43,34 +44,32 @@ class Transaction {
     }
 }
 
+const convertTimestampToDateTime = (timestamp) => {
+    const date = new Date(timestamp);
+    return date.toISOString();
+};
+
 const createTransaction = async (req, res) => {
-    const transactionData = { ...req.body, transaction_date: Date.now() };
-    const accountNum = transactionData.source_account_id;
+    const transaction = { ...req.body, transaction_date: Date.now() };
+    const accountNum = transaction.source_account_id; 
 
     if (!accountNum) {
         return res.status(400).send({ success: false, message: 'Account number is required.' });
     }
 
-    if (!transactionData.transaction_type) {
+    if (!transaction.transaction_type) {
         return res.status(400).send({ success: false, message: 'Transaction type is required.' });
     }
 
     try {
-        // Validate transaction data
-        Transaction.validateTransaction(transactionData);
-
         const snapshot = await get(ref(database, 'transactions'));
-        const transactionCount = snapshot.size || 0;
-        const customKey = transactionCount + 1;
+        const transactionCount = snapshot.size || 0; // Get the count of existing transactions
+        const customKey = transactionCount + 1; // Increment ID by one
 
-        const newTransaction = new Transaction({
-            ...transactionData,
-            id: customKey,
-        });
-
+        // Prepare the transaction data with the new ID
         await set(ref(database, `transactions/${customKey}`), {
-            ...newTransaction,
-            transaction_date: newTransaction.transaction_date,
+            ...transaction,
+            id: customKey // Store the ID as part of the transaction data
         });
 
         const accountDetails = await Account.getAccountByAccountNum(accountNum);
@@ -78,19 +77,13 @@ const createTransaction = async (req, res) => {
             return res.status(404).send({ success: false, message: 'Account not found.' });
         }
 
-        const userEmail = accountDetails.email;
-        const userName = accountDetails.account_name;
+        const userEmail = accountDetails.email; 
+        const userName = accountDetails.account_name; 
 
-        if (transactionData.sendReceipt === 'email') {
+        // Check if we need to send an email receipt
+        if (req.body.sendReceipt === 'email') {
             try {
-                await sendEmailReceipt(
-                    userName,
-                    userEmail,
-                    customKey,
-                    newTransaction.amount,
-                    Transaction.convertTimestampToDateTime(newTransaction.transaction_date),
-                    newTransaction.transaction_type
-                );
+                await sendEmailReceipt(userName, userEmail, customKey, transaction.amount, convertTimestampToDateTime(transaction.transaction_date), transaction.transaction_type);
             } catch (emailError) {
                 console.error("Failed to send email receipt:", emailError);
                 return res.status(500).send({
@@ -103,9 +96,9 @@ const createTransaction = async (req, res) => {
 
         res.status(201).send({
             success: true,
-            id: customKey,
-            ...newTransaction,
-            transaction_date: Transaction.convertTimestampToDateTime(newTransaction.transaction_date),
+            id: customKey, // Return the simple numeric ID
+            ...transaction,
+            transaction_date: convertTimestampToDateTime(transaction.transaction_date)
         });
     } catch (error) {
         console.error("An error occurred while creating the transaction:", error);
@@ -117,6 +110,9 @@ const createTransaction = async (req, res) => {
     }
 };
 
+
+
+
 const getAllTransactions = async (req, res) => {
     try {
         const snapshot = await get(ref(database, 'transactions'));
@@ -125,7 +121,7 @@ const getAllTransactions = async (req, res) => {
             snapshot.forEach(childSnapshot => {
                 const transaction = childSnapshot.val();
                 if (transaction.transaction_date) {
-                    transaction.transaction_date = Transaction.convertTimestampToDateTime(transaction.transaction_date);
+                    transaction.transaction_date = convertTimestampToDateTime(transaction.transaction_date);
                 }
                 transactions.push({ id: childSnapshot.key, ...transaction });
             });
@@ -146,7 +142,7 @@ const getSpecificTransaction = async (req, res) => {
             return res.status(404).send({ message: "Transaction not found" });
         }
         const transaction = snapshot.val();
-        transaction.transaction_date = Transaction.convertTimestampToDateTime(transaction.transaction_date);
+        transaction.transaction_date = convertTimestampToDateTime(transaction.transaction_date);
         res.status(200).send(transaction);
     } catch (error) {
         res.status(500).send(error);
@@ -158,7 +154,7 @@ const updateTransaction = async (req, res) => {
     const updatedData = req.body;
 
     if (updatedData.transaction_date) {
-        updatedData.transaction_date = Transaction.convertTimestampToDateTime(updatedData.transaction_date);
+        updatedData.transaction_date = convertTimestampToDateTime(updatedData.transaction_date);
     }
 
     try {
@@ -231,6 +227,5 @@ module.exports = {
     getSpecificTransaction,
     updateTransaction,
     deleteTransaction,
-    getTransactionsByAccountNumForSixMonths,
+    getTransactionsByAccountNumForSixMonths
 };
-

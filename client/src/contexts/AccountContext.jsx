@@ -153,7 +153,15 @@ export const AccountProvider = ({ children }) => {
 
 
   return (
-    <AccountContext.Provider value={{ pinError, login, LogOutAcc, accountDetails, setAccountDetails, withdrawFromAccount, depositAccount }}>
+    <AccountContext.Provider value={{
+      pinError,
+      login,
+      LogOutAcc,
+      accountDetails,
+      setAccountDetails,
+      withdrawFromAccount,
+      depositAccount,
+    }}>
       {children}
     </AccountContext.Provider>
   );

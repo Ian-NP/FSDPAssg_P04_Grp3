@@ -1,29 +1,8 @@
-.pinInputContent{
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: top;
-    align-items: center;
-    margin-top: 8rem;
-}
-
-.pinInputContent h2{
-    font-size: 3rem;
-    font-weight: 600;
-    margin-top: 0;
-}
-
-.pinInputContent p{
-    font-size: 1.5rem;
-    font-weight: 500;
-    margin: 0 0 3.5rem 0;
-}
-
-/* EnterPin.module.css */
 .pinInputContent {
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-top: 4rem; /* Adjusted margin for better positioning */
 }
 
 .pinForm {
@@ -31,26 +10,47 @@
     justify-content: center;
     align-items: center;
     gap: 1rem;
+    padding-bottom: 30px;
 }
 
 .pinBox {
-    width: 80px; /* Adjust the width as needed */
-    height: 100px; /* Adjust the height as needed */
-    font-size: 3.2rem; /* Font size for the digits */
+    width: 80px;
+    height: 100px;
+    font-size: 3.2rem;
     text-align: center;
-    margin: 0 5px; /* Space between the boxes */
-    border: 1px solid #ccc; /* Border style */
-    border-radius: 5px; /* Rounded corners */
-    outline: none; /* Remove the default focus outline */
+    margin: 0 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
     caret-color: transparent;
 }
 
 .pinBox:focus {
-    outline: none; /* Remove the default focus outline */
-    border-color: #007BFF; /* Change border color on focus */
-    background-color: #f0f8ff; /* Light background on focus */
+    outline: none;
+    border-color: #007BFF;
+    background-color: #f0f8ff;
 }
 
 .pinBox::-webkit-input-placeholder {
-    color: transparent; /* Make placeholder transparent */
+    color: transparent;
+}
+
+.attemptsLeft {
+    font-size: 16px; /* Increased for better readability */
+    color: #333;
+    margin-top: 20px;
+    font-weight: bold;
+}
+
+.pinInputContent p {
+    font-size: 1.4rem;
+    font-weight: 500;
+    margin: 0 0 3.5rem 0;
+}
+
+/* Adjust the "Please enter your PIN" message styling */
+.pinInputContent .pinMessage {
+    font-size: 1.8rem; /* Adjust size */
+    font-weight: 500;
+    margin-bottom: 2rem; /* Add space below */
 }
