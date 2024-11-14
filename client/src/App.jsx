@@ -26,7 +26,9 @@ import PreOrderWithdrawalScreen from './pages/PreOrderWithdrawalScreen';
 import PreOrderWithdrawalConfirmation from './pages/PreOrderWithdrawalConfirmation';
 import ATMDashboard from './pages/ATMDashboard';
 import LandingPage from './pages/LandingPage';
+import PreOrderQR from './pages/PreOrderQR';
 import './styles/App.css';
+import QRCodeScanner from './components/QRCodeScanner';
 
 const App = () => {
   const accountNum = '4111 1111 1111 1111'; // Example account number (replace with dynamic value from session or context)
@@ -60,6 +62,8 @@ const App = () => {
         <Route path="/preOrderWithdrawalConfirmation" element={<PreOrderWithdrawalConfirmation />} />
         <Route path="/freeze-account/:accountNum" element={<FreezeAccount />} />
         <Route path="/atm-dashboard" element={<ATMDashboard />} />
+        <Route path="/preOrderQR" element={<PreOrderQR />} />
+        <Route path="/qrCodeScanner" element={<QRCodeScanner />} />
       </Routes>
     </AccountProvider>
   );

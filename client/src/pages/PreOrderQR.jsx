@@ -1,42 +1,57 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-import QRCode from 'qrcode.react';  // Import QR code generator
-import styles from '../styles/PreOrderQR.module.css';  // Create styles for this page
+import { useLocation, useNavigate } from 'react-router-dom';
+import { QRCodeSVG } from 'qrcode.react'; 
+import styles from '../styles/PreOrderQR.module.css';  
+import Layout from '../components/Layout';
 
 const PreOrderQR = () => {
-    const { state } = useLocation();  // Retrieve the data passed from the previous page
+    const { state } = useLocation();
     const { amount, accountDetails } = state || {};
-    
+    const navigate = useNavigate();
+
     const [qrData, setQrData] = useState('');
 
-    // Combine the withdrawal details and account info into a single string for the QR code
     useEffect(() => {
+        console.log("State received:", state);
+        
+        if (!state) {
+            console.error("No state data found. Redirecting to previous page.");
+            navigate(-1); 
+            return;
+        }
+
         if (amount && accountDetails) {
+            const { accountName, accountNum } = accountDetails;
+            console.log("Amount:", amount);
+            console.log("Account Name:", accountName);
+            console.log("Account Number:", accountNum);
+
             const data = {
                 amount: amount,
-                accountName: accountDetails.accountName,
-                accountNum: accountDetails.accountNum,
+                accountName: accountName,
+                accountNum: accountNum,
             };
-            setQrData(JSON.stringify(data));  // Set the data as JSON string
+
+            console.log("Generated Data for QR Code:", data);
+            setQrData(JSON.stringify(data));
+        } else {
+            console.warn("Amount or account details are missing.");
         }
-    }, [amount, accountDetails]);
+    }, [amount, accountDetails, state, navigate]);
 
     return (
-        <div className={styles.container}>
-            <h2>Withdrawal QR Code</h2>
-            <p>Scan this QR code to confirm your withdrawal.</p>
-
-            {qrData ? (
-                <div className={styles.qrContainer}>
-                    <QRCode value={qrData} size={256} />
-                    <p>Withdrawal Amount: {amount} SGD</p>
-                    <p>Account Name: {accountDetails?.accountName}</p>
-                    <p>Account Number: {accountDetails?.accountNum}</p>
+        <Layout>
+            <div className={styles.container}>
+                <div className={styles.header}>
+                    <p>Scan the QR code at the ATM</p>
+                    {qrData ? (
+                        <QRCodeSVG value={qrData} size={256} />
+                    ) : (
+                        <p>Loading QR Code...</p>
+                    )}
                 </div>
-            ) : (
-                <p>Loading QR code...</p>
-            )}
-        </div>
+            </div>
+        </Layout>
     );
 };
 

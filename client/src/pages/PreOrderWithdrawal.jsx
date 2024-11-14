@@ -31,9 +31,13 @@ const PreOrderWithdrawal = () => {
     useEffect(() => {
         const fetchAccountDetails = async () => {
             try {
-                const response = await axios.post("http://localhost:3000/api/accounts/login", {
+                const response = await axios.post("http://192.168.1.9:3000/api/accounts/login", {
                     account_num: accountNum,
                     password: password,
+                }, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
                 });
     
                 // Handle successful login response
@@ -55,7 +59,7 @@ const PreOrderWithdrawal = () => {
     }, [accountNum]);
 
     const onProceed = () => {
-        navigate('/PreOrderWithdrawalScreen', { state: { accountBalance } });
+        navigate('/PreOrderWithdrawalScreen', { state: { accountBalance, accountName, accountNum } });
     };
 
     return (

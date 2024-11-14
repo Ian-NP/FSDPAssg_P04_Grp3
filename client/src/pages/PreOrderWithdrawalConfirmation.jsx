@@ -23,7 +23,12 @@ const PreOrderWithdrawalConfirmation = () => {
 
     const handleContinue = () => {
         if (balanceCheck === 'sufficient') {
-            navigate('/PreOrderQR');
+            navigate('/PreOrderQR', {
+                state: {
+                    amount, 
+                    accountDetails
+                }
+            });
         }
     };
 

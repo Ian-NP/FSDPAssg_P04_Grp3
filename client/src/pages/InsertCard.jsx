@@ -87,6 +87,8 @@ const InsertCard = () => {
       />
       <p>Please insert your card</p>
 
+      <button onClick={() => navigate('/QRCodeScanner')}>Scan QR Code</button>
+
       {/* Display cash levels */}
       <div className={styles.cashAvailabilityContainer}>
         <h2>Amount of Cash Available</h2>
