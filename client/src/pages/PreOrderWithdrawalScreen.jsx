@@ -36,7 +36,8 @@ const PreOrderWithdrawalScreen = () => {
       return;
     } else {
       console.log("Amount is valid");
-      navigate('/preOrderWithdrawalConfirmation', { state: { amount, accountDetails } });
+      console.log(accountDetails)
+      navigate('/PreOrderQR', { state: { amount, accountDetails } });
     }
   };
 

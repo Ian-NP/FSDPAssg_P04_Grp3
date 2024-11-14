@@ -21,18 +21,14 @@ const PreOrderQR = () => {
         }
 
         if (amount && accountDetails) {
-            const { accountName, accountNum } = accountDetails;
             console.log("Amount:", amount);
-            console.log("Account Name:", accountName);
-            console.log("Account Number:", accountNum);
+            console.log(accountDetails);
+
 
             // Ensure data matches expected structure in QRCodeScanner
             const data = JSON.stringify({
                 amount,
-                accountDetails: {
-                    accountName,
-                    accountNum,
-                },
+                accountDetails
             });
 
             console.log("Generated Data for QR Code:", data);

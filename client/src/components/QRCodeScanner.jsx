@@ -8,33 +8,34 @@ const QRCodeScanner = () => {
 
   const handleScan = (data) => {
     if (data) {
-      // Log the raw data to check if it's a string or an object
-      console.log('Raw Scanned Data:', data);
+        // Log the raw data to check if it's a string or an object
+        console.log('Raw Scanned Data:', data);
 
-      // Check if data is an object with a "text" property
-      const scannedText = typeof data === 'string' ? data : data?.text;
+        // Check if data is an object with a "text" property
+        const scannedText = typeof data === 'string' ? data : data?.text;
 
-      if (!scannedText) {
-        setError(new Error('QR code did not contain text data'));
-        return;
-      }
-
-      try {
-        // Parse the scanned text as JSON
-        const parsedData = JSON.parse(scannedText.trim());
-        const { amount, accountDetails } = parsedData;
-
-        // Check if all required fields are present
-        if (!amount || !accountDetails || !accountDetails.accountName || !accountDetails.accountNum) {
-          throw new Error('Invalid QR code data format');
+        if (!scannedText) {
+            setError(new Error('QR code did not contain text data'));
+            return;
         }
 
-        // Navigate with parsed data
-        navigate('/PreOrderWithdrawalConfirmation', { state: { amount, accountDetails } });
-      } catch (err) {
-        setError(new Error('Invalid QR code data format'));
-        console.error('Error parsing QR code data:', err);
-      }
+        try {
+            // Parse the scanned text as JSON
+            const parsedData = JSON.parse(scannedText.trim());
+            console.log(parsedData);
+            const { amount, accountDetails } = parsedData;
+
+            // Check if all required fields are present
+            if (!amount || !accountDetails) {
+                throw new Error('Invalid QR code data format');
+            }
+
+            // Rename accountDetails to accountInfo when navigating
+            navigate('/PreOrderWithdrawalConfirmation', { state: { amount, accountInfo: accountDetails } });
+        } catch (err) {
+            setError(new Error('Invalid QR code data format'));
+            console.error('Error parsing QR code data:', err);
+        }
     }
   };
 
