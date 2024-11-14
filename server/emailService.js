@@ -1,5 +1,6 @@
 require('dotenv').config(); // Load environment variables from .env file
 const nodemailer = require('nodemailer');
+const os = require('os');
 
 // Configure the Nodemailer transporter
 const transporter = nodemailer.createTransport({
@@ -54,9 +55,29 @@ const sendEmailReceipt = async (userName, userEmail, transactionId, amount, tran
  * @param {string} userName - The name of the user
  * @param {string} userEmail - The user's email address
  */
-const sendActiveSessionAlert = async (userName, userEmail, accountNum, baseUrl) => {
-    const freezeLink = `${baseUrl}/freeze-account/${encodeURIComponent(accountNum)}`; // Point to your React route
 
+function getFirstNetworkAddress() {
+    const networkInterfaces = os.networkInterfaces();
+
+    for (const interfaceName in networkInterfaces) {
+        const addresses = networkInterfaces[interfaceName];
+
+        for (const address of addresses) {
+            if (address.family === 'IPv4' && !address.internal) {
+                return `http://${address.address}`;
+            }
+        }
+    }
+
+    return null;
+}
+
+console.log('First network address:', getFirstNetworkAddress());
+
+const sendActiveSessionAlert = async (userName, userEmail, accountNum) => {
+    baseUrl = getFirstNetworkAddress();
+    console.log('Base URL:', baseUrl);
+    const freezeLink = `${baseUrl}/freeze-account/${encodeURIComponent(accountNum)}`; // Point to your React route
 
     const subject = 'Active Session Alert';
     const text = `Dear ${userName},\n\n` +
