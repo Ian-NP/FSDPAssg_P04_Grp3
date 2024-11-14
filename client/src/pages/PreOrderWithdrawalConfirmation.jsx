@@ -3,31 +3,55 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import styles from '../styles/PreOrderWithdrawalConfirmation.module.css';
 import Layout from '../components/Layout';
 import SlideButton from '../components/SlideButton';
+import axios from 'axios';
 
 const PreOrderWithdrawalConfirmation = () => {
-    const { state } = useLocation(); // Get state passed from PreOrderWithdrawalScreen
-    const { amount, accountDetails } = state || {};  // Extract amount and account details
+    const { state } = useLocation();
+    const { amount, accountDetails } = state || {};
     const navigate = useNavigate();
     
-    const [balanceCheck, setBalanceCheck] = useState(null); // State to manage balance check
-    
-    // Check if account balance is sufficient
+    const [balanceCheck, setBalanceCheck] = useState(null);
+    const [success, setSuccess] = useState(false);
+
     const isBalanceSufficient = accountDetails?.balance >= amount;
 
-    // Set the balance check result
     useEffect(() => {
         if (accountDetails?.balance) {
             setBalanceCheck(isBalanceSufficient ? 'sufficient' : 'insufficient');
         }
     }, [accountDetails, amount]);
 
-    const handleContinue = () => {
-        navigate('/ReceiptChoice', {
-            state: {
-                amount, 
-                accountDetails
+    const handleContinue = async () => {
+        // Define transaction data to send to the backend
+        const transactionData = {
+            accountId: accountDetails?.id, // Ensure account ID is available in accountDetails
+            amount: parseInt(amount),
+            transactionType: "withdrawal"
+        };
+
+        // Make POST request to log the transaction
+        try {
+            const response = await axios.post('http://localhost:3000/api/transactions', transactionData);
+
+            if (response.data.success) {
+                console.log("Transaction created successfully:", response.data);
+                setSuccess(true);
+
+                // Navigate to the ReceiptChoice page with transaction details
+                navigate("/receiptChoice", { 
+                    state: { 
+                        transactionType: "withdrawal", 
+                        amount: parseInt(amount), 
+                        email: accountDetails.email 
+                    } 
+                });
+            } else {
+                alert("An error occurred while recording the transaction. Please try again.");
             }
-        });
+        } catch (error) {
+            console.error("Error creating transaction:", error);
+            alert("An error occurred while recording the transaction. Please try again.");
+        }
     };
 
     const handleSlideComplete = () => {
