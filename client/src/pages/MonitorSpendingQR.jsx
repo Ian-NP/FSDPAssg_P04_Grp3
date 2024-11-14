@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
@@ -16,12 +16,13 @@ let fetchInProgress = false; // Declare this outside the component to persist ac
 const MonitorSpendingQR = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [pdfLink, setPdfLink] = useState('');
+    const fetchInProgress = useRef(false); // Use a ref to track if fetch is in progress
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchDataAndGeneratePdf = async () => {
-            if (!fetchInProgress) {
-                fetchInProgress = true; // Set flag to prevent repeated calls
+            if (!fetchInProgress.current) {
+                fetchInProgress.current = true; // Set flag to prevent repeated calls
                 try {
                     const response = await axios.get('http://localhost:3000/api/transactions/getTransactionByAccountNum/4111 1111 1111 1111');
                     const transactions = response.data;
@@ -114,7 +115,7 @@ const MonitorSpendingQR = () => {
                     const insightsResponse = await axios.post('http://localhost:3000/api/analyze-spending', {
                         transactionData: transactions
                     });
-                    
+
                     // Generate and upload the PDF with insights
                     await generateAndUploadPdf(cashflowChartData, categoryChartData, categoryLabels, categoryData, insightsResponse.data);
                     setIsLoading(false);
@@ -122,7 +123,7 @@ const MonitorSpendingQR = () => {
                     console.error('Error fetching transaction data or insights:', error);
                     setIsLoading(false);
                 } finally {
-                    fetchInProgress = false; // Reset flag after request is complete
+                    fetchInProgress.current = false; // Reset flag after request is complete
                 }
             }
         };
@@ -317,7 +318,7 @@ const MonitorSpendingQR = () => {
                 // Set width and height for images to fit nicely in the landscape page
                 const pageWidth = pdf.internal.pageSize.getWidth();
                 const pageHeight = pdf.internal.pageSize.getHeight();
-                const padding = 30; // Add some padding for aesthetics
+                const padding = 20; // Add some padding for aesthetics
 
                 const imageWidth = pageWidth - padding * 2; // Fit within the page width with padding
                 const imageHeight = pageHeight - padding * 2; // Fit within the page height with padding
@@ -327,7 +328,7 @@ const MonitorSpendingQR = () => {
 
                 // Add a new page for the second chart with adjusted dimensions
                 pdf.addPage();
-                pdf.addImage(imgData2, 'PNG', padding, padding, imageWidth, imageHeight);
+                pdf.addImage(imgData2, 'PNG', padding, padding, imageWidth, imageHeight-20);
 
                 // Add a new page for insights
                 pdf.addPage();
