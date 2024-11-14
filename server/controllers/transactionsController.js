@@ -196,7 +196,7 @@ const getTransactionsByAccountNumForSixMonths = async (req, res) => {
                 if (
                     transaction.source_account_id === accountNum &&
                     transaction.transaction_date >= sixMonthsAgoTimestamp &&
-                    transaction.id <= 185
+                    transaction.id <= 210
                 ) {
                     transaction.transaction_date = Transaction.convertTimestampToDateTime(transaction.transaction_date);
                     transactions.push({ id: childSnapshot.key, ...transaction });

@@ -35,21 +35,21 @@ const analyzeSpendingAndAdvice = async (transactionData) => {
   try {
     const chatInstance = await geminiChatModel.startChat();
 
-    // Spending Pattern Analysis prompt
-    const spendingPatternPrompt = `Analyze this user's spending data: ${JSON.stringify(transactionData)}. Identify key spending patterns, highlight frequently spent categories, and provide insights.`;
+    const combinedPrompt = `Analyze this user's spending data: ${JSON.stringify(transactionData)}. 
+      Rules to follow for your response:
+        Make sure to use personal language such as "you" and "your" to make the analysis relatable and easy to follow. Keep the response short, simple, and impactful without overwhelming the user with too much information. Do not include any disclaimers or statements at the end of your response.
 
-    // Personalized Financial Advice prompt
-    const financialAdvicePrompt = `Based on this user's transaction history: ${JSON.stringify(transactionData)}, provide specific recommendations to optimize expenses and improve their financial health.`;
+      Follow this order in your response:
+        1. Provide a financial health score to indicate the user's overall financial well-being.
+        2. Identify key spending patterns and highlight frequently spent categories.
+        3. Offer clear, concise insights based on the spending analysis.
+        4. Provide specific and practical recommendations for optimizing expenses and improving financial health.
+    `;
 
-    // Send the spending pattern analysis prompt
-    const spendingAnalysisResponse = await chatInstance.sendMessage(spendingPatternPrompt);
-
-    // Send the financial advice prompt
-    const financialAdviceResponse = await chatInstance.sendMessage(financialAdvicePrompt);
+    const analysisAndAdvice = await chatInstance.sendMessage(combinedPrompt);
 
     return {
-      spendingAnalysis: spendingAnalysisResponse?.response.text() || 'Analysis not provided',
-      financialAdvice: financialAdviceResponse?.response.text() || 'Advice not provided',
+      analysisAndAdvice: analysisAndAdvice?.response.text() || 'Analysis and advice not provided',
     };
   } catch (error) {
     console.error('Error generating analysis or advice:', error);

@@ -19,6 +19,7 @@ const PreOrderWithdrawal = () => {
     const navigate = useNavigate();
 
     const [amount, setAmount] = useState('');
+    const [accountDetails, setAccountDetails] = useState(null);
     const [accountBalance, setAccountBalance] = useState(null);
     const [accountName, setAccountName] = useState('');
     const [accountType, setAccountType] = useState('');
@@ -45,6 +46,7 @@ const PreOrderWithdrawal = () => {
                 // Handle successful login response
                 if (response.data.success) {
                     const account = response.data.account;
+                    setAccountDetails(account);
                     console.log(account)
                     setAccountBalance(account.balance);
                     setAccountName(account.account_name);
@@ -61,7 +63,7 @@ const PreOrderWithdrawal = () => {
     }, [accountNum]);
 
     const onProceed = () => {
-        navigate('/PreOrderWithdrawalScreen', { state: { accountBalance, accountName, accountNum } });
+        navigate('/PreOrderWithdrawalScreen', { state: { accountDetails } });
     };
 
     return (
