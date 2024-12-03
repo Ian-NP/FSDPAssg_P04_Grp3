@@ -72,10 +72,32 @@ function getFirstNetworkAddress() {
     return null;
 }
 
+function getThirdNetworkAddress() {
+    const networkInterfaces = os.networkInterfaces();
+    let addressCount = 0;
+
+    for (const interfaceName in networkInterfaces) {
+        const addresses = networkInterfaces[interfaceName];
+
+        for (const address of addresses) {
+            if (address.family === 'IPv4' && !address.internal) {
+                addressCount++;
+
+                if (addressCount === 3) {
+                    return `http://${address.address}`;
+                }
+            }
+        }
+    }
+
+    return null; // Return null if there aren't three external IPv4 addresses.
+}
+
 console.log('First network address:', getFirstNetworkAddress());
+console.log('Third network address:', getThirdNetworkAddress());
 
 const sendActiveSessionAlert = async (userName, userEmail, accountNum) => {
-    const baseUrl = getFirstNetworkAddress();
+    const baseUrl = getThirdNetworkAddress();
 
     const freezeLink = `${baseUrl}:5173/freeze-account/${encodeURIComponent(accountNum)}`; // Point to your React route
 

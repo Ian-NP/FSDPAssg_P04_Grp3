@@ -23,6 +23,8 @@ const MonitorSpendingQR = () => {
         const fetchDataAndGeneratePdf = async () => {
             if (!fetchInProgress.current) {
                 fetchInProgress.current = true; // Set flag to prevent repeated calls
+                console.log('Fetching transaction data and generating PDF...');
+
                 try {
                     const response = await axios.get('http://localhost:3000/api/transactions/getTransactionByAccountNum/4111 1111 1111 1111');
                     const transactions = response.data;

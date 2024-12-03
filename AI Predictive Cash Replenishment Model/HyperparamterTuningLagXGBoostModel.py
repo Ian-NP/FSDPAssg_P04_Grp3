@@ -4,7 +4,7 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 from xgboost import XGBRegressor
-from sklearn.model_selection import train_test_split, RandomizedSearchCV
+from sklearn.model_selection import RandomizedSearchCV
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 import numpy as np
 
@@ -19,10 +19,6 @@ atm_data = pd.read_csv(file_path)
 # Parse the 'Transaction Date' with a flexible format
 atm_data['Transaction Date'] = pd.to_datetime(atm_data['Transaction Date'], format='%d-%m-%Y', errors='coerce')
 
-# Check for any parsing issues
-if atm_data['Transaction Date'].isnull().any():
-    print("Warning: Some dates could not be parsed. Check for inconsistent date formats.")
-
 # Drop rows with parsing issues if necessary
 atm_data = atm_data.dropna(subset=['Transaction Date'])
 
@@ -30,15 +26,15 @@ atm_data = atm_data.dropna(subset=['Transaction Date'])
 atm_data = atm_data.sort_values(by=['ATM Name', 'Transaction Date'])
 
 # Replace old ATM names with new ATM names
-atm_name_replacements = {
-    "Big Street ATM": "Yishun Ring Blk 103",
-    "Mount Road ATM": "Sembawang MRT",
-    "Airport ATM": "Admiralty MRT",
-    "KK Nagar ATM": "Woodlands MRT",
-    "Christ College ATM": "Marsiling MRT"
-}
+# atm_name_replacements = {
+#     "Big Street ATM": "Yishun Ring Blk 103",
+#     "Mount Road ATM": "Sembawang MRT",
+#     "Airport ATM": "Admiralty MRT",
+#     "KK Nagar ATM": "Woodlands MRT",
+#     "Christ College ATM": "Marsiling MRT"
+# }
 
-atm_data['ATM Name'] = atm_data['ATM Name'].replace(atm_name_replacements)
+# atm_data['ATM Name'] = atm_data['ATM Name'].replace(atm_name_replacements)
 
 # Add rolling average features
 rolling_window = 7  # Set the rolling window (e.g., 7 days)
@@ -85,51 +81,63 @@ param_grid = {
     'gamma': [0, 0.1, 0.3, 0.5]
 }
 
-# Iterate over each ATM and perform hyperparameter tuning
+# Iterate over each ATM and either train or load the existing model
 for atm in atms:
-    print(f"\nHyperparameter tuning for ATM: {atm}")
+    model_filename = os.path.join(output_dir, f"{atm}_xgboost_model.pkl")
     
     # Filter data for the current ATM
     atm_df = atm_data[atm_data['ATM Name'] == atm]
-    
-    if len(atm_df) < 20:  # Ensure there is enough data to train and test
-        print(f"Not enough data to train a reliable model for ATM: {atm}")
-        continue
-    
-    X = atm_df[features]
-    y = atm_df[target]
-    
-    # Split data into training and testing sets
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-    
-    # Create an XGBoost Regressor instance
-    xgb_model = XGBRegressor(random_state=42)
-    
-    # Set up the RandomizedSearchCV
-    randomized_search = RandomizedSearchCV(
-        estimator=xgb_model,
-        param_distributions=param_grid,
-        n_iter=50,  # Number of different combinations to try
-        scoring='neg_mean_squared_error',
-        cv=3,  # 3-fold cross-validation
-        verbose=2,
-        n_jobs=-1,  # Use all available cores
-        random_state=42
-    )
-    
-    # Fit the model with RandomizedSearchCV
-    randomized_search.fit(X_train, y_train)
 
-    # Save the trained model to the specified directory
-    model_filename = os.path.join(output_dir, f"{atm}_xgboost_model.pkl")
-    joblib.dump(randomized_search.best_estimator_, model_filename)
-    print(f"Model for {atm} saved as {model_filename}")
+    if len(atm_df) < 14:  # Ensure there is enough data to train and test
+        print(f"Not enough data to train or evaluate a reliable model for ATM: {atm}")
+        continue
+
+    # Check if the model already exists
+    if not os.path.exists(model_filename):
+        print(f"Training model for ATM: {atm}")
+        
+        # Use the last 7 records as the test set and the rest as the training set
+        X_train = atm_df.iloc[:-7][features]
+        y_train = atm_df.iloc[:-7][target]
+        X_test = atm_df.iloc[-7:][features]
+        y_test = atm_df.iloc[-7:][target]
+        
+        # Create an XGBoost Regressor instance
+        xgb_model = XGBRegressor(random_state=42)
+        
+        # Set up the RandomizedSearchCV
+        randomized_search = RandomizedSearchCV(
+            estimator=xgb_model,
+            param_distributions=param_grid,
+            n_iter=50,  # Number of different combinations to try
+            scoring='neg_mean_squared_error',
+            cv=3,  # 3-fold cross-validation
+            verbose=2,
+            n_jobs=-1,  # Use all available cores
+            random_state=42
+        )
+        
+        # Fit the model with RandomizedSearchCV
+        randomized_search.fit(X_train, y_train)
+
+        # Save the trained model to the specified directory
+        best_model = randomized_search.best_estimator_  # Define best_model here
+        joblib.dump(best_model, model_filename)
+        print(f"Model for {atm} saved as {model_filename}")
+        
+        # Print the best parameters found
+        print(f"Best Parameters for ATM {atm}: {randomized_search.best_params_}")
     
-    # Print the best parameters found
-    print(f"Best Parameters for ATM {atm}: {randomized_search.best_params_}")
+    else:
+        print(f"Model for {atm} already exists. Loading the model...")
+        # Load the trained model
+        best_model = joblib.load(model_filename)  # Define best_model here as well
     
-    # Use the best estimator to predict
-    best_model = randomized_search.best_estimator_
+    # Use the last 7 records as the test set
+    X_test = atm_df.iloc[-7:][features]
+    y_test = atm_df.iloc[-7:][target]
+    
+    # Make predictions using the loaded or trained model
     y_pred = best_model.predict(X_test)
     
     # Calculate and print evaluation metrics
@@ -138,18 +146,23 @@ for atm in atms:
     rmse = np.sqrt(mse)
     r2 = r2_score(y_test, y_pred)
     
-    print("Model Evaluation Metrics after Hyperparameter Tuning with Lag Features:")
+    print("Model Evaluation Metrics:")
     print(f"Mean Absolute Error (MAE): {mae:.2f}")
     print(f"Mean Squared Error (MSE): {mse:.2f}")
     print(f"Root Mean Squared Error (RMSE): {rmse:.2f}")
     print(f"R-squared (R²) Score: {r2:.2f}")
     
-    # Plot the predicted vs actual values for the test set
+    # Plot the predicted vs actual values for the test set with dates on the x-axis
     plt.figure(figsize=(14, 7))
-    plt.plot(y_test.values, label='Actual', marker='o', linestyle='-', alpha=0.7)
-    plt.plot(y_pred, label='Predicted', marker='x', linestyle='--', alpha=0.7)
-    plt.title(f'Next-Day Predicted vs Actual Total Amount Withdrawn for ATM: {atm} (After Hyperparameter Tuning with Lag Features)')
-    plt.xlabel('Index of Test Data')
+    plt.plot(y_test.index, y_test.values, label='Actual', marker='o', linestyle='-', alpha=0.7)
+    plt.plot(y_test.index, y_pred, label='Predicted', marker='x', linestyle='--', alpha=0.7)
+
+    # Add the dates as x-ticks
+    plt.xticks(ticks=y_test.index, labels=atm_df['ds'].iloc[-7:].dt.strftime('%Y-%m-%d'), rotation=45)
+
+    plt.title(f'Next-Day Predicted vs Actual Total Amount Withdrawn for ATM: {atm}')
+    plt.xlabel('Date')
     plt.ylabel('Total Amount Withdrawn')
     plt.legend()
+    plt.tight_layout()  # Adjust layout to ensure the x-tick labels fit
     plt.show()
