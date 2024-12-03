@@ -1,4 +1,5 @@
 const dotenv = require("dotenv");
+const os = require('os');
 dotenv.config();
 const { GoogleGenerativeAI, HarmBlockThreshold, HarmCategory } = require("@google/generative-ai");
 
@@ -57,4 +58,25 @@ const analyzeSpendingAndAdvice = async (transactionData) => {
   }
 };
 
-module.exports = { analyzeSpendingAndAdvice };
+const getThirdNetworkAddress = () => {
+  const networkInterfaces = os.networkInterfaces();
+  let addressCount = 0;
+
+  for (const interfaceName in networkInterfaces) {
+      const addresses = networkInterfaces[interfaceName];
+
+      for (const address of addresses) {
+          if (address.family === 'IPv4' && !address.internal) {
+              addressCount++;
+
+              if (addressCount === 3) {
+                  return `http://${address.address}`;
+              }
+          }
+      }
+  }
+
+  return null; // Return null if there aren't three external IPv4 addresses.
+}
+
+module.exports = { analyzeSpendingAndAdvice, getThirdNetworkAddress };

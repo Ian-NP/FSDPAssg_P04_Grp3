@@ -1,7 +1,7 @@
 //Withdrawal.jsx
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate, useLocation } from 'react-router-dom'; 
 import Header from '../components/Header';
 import Button from '../components/Button';
 import commonStyles from "../styles/Common.module.css"; 
@@ -23,6 +23,16 @@ const Withdrawal = () => {
   const { cashLevels, withdrawCash } = useATM();
   const navigate = useNavigate(); 
   const threshold = 4;
+
+  const location = useLocation();
+  const { amountToWithdraw } = location.state || {}; // Fallback if state is undefined
+
+  // Set amount to amountToWithdraw if available
+  useEffect(() => {
+    if (amountToWithdraw) {
+      setAmount(amountToWithdraw.toString());
+    }
+  }, [amountToWithdraw]);
 
   useEffect(() => {
     const { amount, count } = getMostFrequentAmountFromStorage();
@@ -178,7 +188,7 @@ const Withdrawal = () => {
     }
   };
 
-  const isAmountZero = amount === "0.00" || amount === "";
+  const isAmountZero = amount === "0.00" || amount === "" || amount === 0;
 
   return (
     <div className={commonStyles['atm-container']}>
