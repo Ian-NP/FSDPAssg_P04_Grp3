@@ -22,7 +22,7 @@ const Withdrawal = () => {
   const [showWithdrawButton, setShowWithdrawButton] = useState(false);
   const { cashLevels, withdrawCash } = useATM();
   const navigate = useNavigate(); 
-  const threshold = 4;
+  const threshold = 3;
 
   useEffect(() => {
     const { amount, count } = getMostFrequentAmountFromStorage();
@@ -214,7 +214,9 @@ const Withdrawal = () => {
 
       {/* Conditionally render the Withdraw button for the most frequent amount */}
       {mostFrequentAmount && showWithdrawButton && (
-        <button onClick={() => setAmount(mostFrequentAmount)}>
+        <button onClick={() => setAmount(mostFrequentAmount)}
+        className={styles['large-button']}
+        >
           Withdraw ${mostFrequentAmount}
         </button>
       )}
