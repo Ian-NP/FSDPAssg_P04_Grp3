@@ -35,7 +35,7 @@ const modelOptions = {
         - "Unrecognized command" for any other unrecognized input or commands.
     2. For "Withdraw Funds," extract the amount specified by the user:
         - If the amount is not provided, set the amount to "0".
-        - If the amount is specified, round it to the nearest multiple of 10 or 50, whichever is closer.
+        - If the amount is specified, round it to the nearest multiple of 10 or 50, whichever is closer, but never to 0. If it's rounded off to zero, just change it to 10 instead.
     3. Respond only in the following JSON format:
     {
         "action": "<action_name>",

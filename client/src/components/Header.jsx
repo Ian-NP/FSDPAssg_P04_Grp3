@@ -21,7 +21,7 @@ const Header = () => {
     <header className={styles['atm-header']}>
       <img src={OCBClogo} alt="OCBC Logo" className={styles['ocbc-logo']} />
       <div className={styles['header-right']}>
-        <SpeechRecognitionHandler />
+        {location.pathname !== '/enter-pin' && <SpeechRecognitionHandler />}
         <span className={styles['language']}><b>中文</b></span>
         <div className={styles['header-divider']}></div>
         <button className={styles['exit-container']} onClick={handleExit}>
