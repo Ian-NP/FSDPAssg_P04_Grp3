@@ -11,6 +11,7 @@ const transactionRoutes = require('./models/transactions');
 const transactionsController = require('./controllers/transactionsController');
 const ATMController = require('./controllers/atmController');
 const analyzeSpendingAndAdvice = require('./SpendingHabitsAnalysis');
+const { getActionCommand } = require('./voiceCommandGeneration');
 
 const app = express();
 
@@ -85,8 +86,8 @@ app.post('/api/upload-pdf', (req, res) => {
         }
 
         // Get the local IP address and send the accessible URL
-        const localIp = getLocalIpAddress();
-        res.send({ pdfUrl: `http://${localIp}:3000/downloads/${uniqueFilename}` });
+        const localIp = analyzeSpendingAndAdvice.getThirdNetworkAddress() || getLocalIpAddress();
+        res.send({ pdfUrl: `${localIp}:3000/downloads/${uniqueFilename}` });
     });
 });
 
@@ -99,6 +100,18 @@ app.post('/api/analyze-spending', async (req, res) => {
       res.status(500).send({ error: error.message });
     }
   });
+
+  
+// Voice Command Generation
+app.post("/api/voiceCommandGeneration", async (req, res) => {
+    const { userResponse } = req.body;
+    try {
+      const result = await getActionCommand(userResponse);
+      res.status(200).send(result);
+    } catch (error) {
+      res.status(500).send({ error: error.message });
+    }
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

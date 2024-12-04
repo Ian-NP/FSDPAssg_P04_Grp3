@@ -1,0 +1,116 @@
+.microphoneBtn {
+    background-color: transparent; /* Transparent background */
+    border: none;
+    /* border: 2px solid #000; */
+    border-radius: 50%; /* Makes the button circular */
+    width: 48px; /* Button size */
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease; /* Smooth transitions */
+  }
+  
+  .microphoneBtn img {
+    width: 2rem;
+    height: 2rem;
+    transition: all 0.3s ease; /* Smooth transition for icon color */
+  }
+  
+  .microphoneBtn:hover {
+    background-color: #333333; /* Black background on hover */
+    border-color: #333333; /* Match border color to background */
+  }
+  
+  .microphoneBtn:hover img {
+    filter: invert(100%); /* Turn the icon white */
+  }
+  
+  .microphoneBtn:active {
+    background-color: #333; /* Slightly lighter black on active */
+    border-color: #333; /* Match border color */
+  }
+
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Dark overlay */
+    backdrop-filter: blur(5px); /* Optional blur effect */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000; /* Ensure it's on top of other content */
+  }
+  
+  .modal {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    z-index: 1001; /* Above the overlay */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 4rem;
+  }
+  
+  .modal p {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+  
+  .modal button {
+    margin: 10px;
+  }
+  
+/* Stop button */
+.stopBtn {
+    background-color: white; /* Red background */
+    border: none;
+    border-radius: 50%; /* Circular button */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  
+  /* .stopBtn:hover {
+    background-color: #b02a37;
+  } */
+  
+  /* Stop icon inside the stop button */
+  .stopIcon {
+    width: 70px; /* Adjust icon size */
+    height: 70px;
+    transition: opacity 0.3s ease;
+  }
+
+  .stopIcon:hover{
+    opacity: 0.8;
+  }
+  
+  /* Cancel button */
+  .cancelBtn {
+    background: none;
+    background-color: #dc3545;
+    border: none;
+    border-radius: 10px;
+    color: white; /* Blue text color */
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 10px;
+    padding: 1rem 2rem;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+  
+  .cancelBtn:hover {
+    background-color: #b02a37; /* Darker blue on hover */
+  }
+  
