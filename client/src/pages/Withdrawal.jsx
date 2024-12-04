@@ -1,5 +1,7 @@
+//Withdrawal.jsx
+
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom'; 
 import Header from '../components/Header';
 import Button from '../components/Button';
 import commonStyles from "../styles/Common.module.css"; 
@@ -20,31 +22,29 @@ const Withdrawal = () => {
   const [showWithdrawButton, setShowWithdrawButton] = useState(false);
   const { cashLevels, withdrawCash } = useATM();
   const navigate = useNavigate(); 
-  const threshold = 4;
-
-  const location = useLocation();
-  const { amountToWithdraw } = location.state || {}; // Fallback if state is undefined
-
-  // Set amount to amountToWithdraw if available
-  useEffect(() => {
-    if (amountToWithdraw) {
-      setAmount(amountToWithdraw.toString());
-    }
-  }, [amountToWithdraw]);
+  const threshold = 3;
 
   useEffect(() => {
-    // Retrieve the mostFrequentAmount from localStorage upon component mount
-    const storedData = JSON.parse(localStorage.getItem('mostFrequentAmount')) || { amount: null, count: 0 };
-    console.log("Retrieved mostFrequentAmount from localStorage:", storedData.amount, "with count:", storedData.count);
+    const { amount, count } = getMostFrequentAmountFromStorage();
+    console.log("Retrieved mostFrequentAmount from localStorage:", amount, "with count:", count);
   
-    // Check if the stored count meets the threshold
-    if (storedData.amount && storedData.count >= threshold) {
-      setMostFrequentAmount(storedData.amount);
+    // If the stored amount meets the threshold, show the button
+    if (amount && count >= threshold) {
+      setMostFrequentAmount(amount);
       setShowWithdrawButton(true);
     } else {
-      setShowWithdrawButton(false);
+      // Reset the most frequent amount if the count is 0 or under the threshold
+      if (count === 0 || count < threshold) {
+        console.log("Resetting mostFrequentAmount in localStorage");
+        localStorage.setItem('mostFrequentAmount', JSON.stringify({ amount: null, count: 0 }));
+        
+        // Reset the state in the component as well
+        setMostFrequentAmount(null);
+        setShowWithdrawButton(false);
+      }
     }
-  }, []); // Empty dependency array to run only once on component mount
+  }, []);
+   // Empty dependency array to run only once on component mount
 
   // Function to update the UI when called by trackWithdrawalPatterns
   const updateUI = (amount, thresholdMet) => {
@@ -178,7 +178,7 @@ const Withdrawal = () => {
     }
   };
 
-  const isAmountZero = amount === "0.00" || amount === "" || amount === 0;
+  const isAmountZero = amount === "0.00" || amount === "";
 
   return (
     <div className={commonStyles['atm-container']}>
@@ -214,7 +214,9 @@ const Withdrawal = () => {
 
       {/* Conditionally render the Withdraw button for the most frequent amount */}
       {mostFrequentAmount && showWithdrawButton && (
-        <button onClick={() => setAmount(mostFrequentAmount)}>
+        <button onClick={() => setAmount(mostFrequentAmount)}
+        className={styles['large-button']}
+        >
           Withdraw ${mostFrequentAmount}
         </button>
       )}
