@@ -1,5 +1,3 @@
-//Withdrawal.jsx
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import Header from '../components/Header';
@@ -22,29 +20,21 @@ const Withdrawal = () => {
   const [showWithdrawButton, setShowWithdrawButton] = useState(false);
   const { cashLevels, withdrawCash } = useATM();
   const navigate = useNavigate(); 
-  const threshold = 3;
+  const threshold = 4;
 
   useEffect(() => {
-    const { amount, count } = getMostFrequentAmountFromStorage();
-    console.log("Retrieved mostFrequentAmount from localStorage:", amount, "with count:", count);
+    // Retrieve the mostFrequentAmount from localStorage upon component mount
+    const storedData = JSON.parse(localStorage.getItem('mostFrequentAmount')) || { amount: null, count: 0 };
+    console.log("Retrieved mostFrequentAmount from localStorage:", storedData.amount, "with count:", storedData.count);
   
-    // If the stored amount meets the threshold, show the button
-    if (amount && count >= threshold) {
-      setMostFrequentAmount(amount);
+    // Check if the stored count meets the threshold
+    if (storedData.amount && storedData.count >= threshold) {
+      setMostFrequentAmount(storedData.amount);
       setShowWithdrawButton(true);
     } else {
-      // Reset the most frequent amount if the count is 0 or under the threshold
-      if (count === 0 || count < threshold) {
-        console.log("Resetting mostFrequentAmount in localStorage");
-        localStorage.setItem('mostFrequentAmount', JSON.stringify({ amount: null, count: 0 }));
-        
-        // Reset the state in the component as well
-        setMostFrequentAmount(null);
-        setShowWithdrawButton(false);
-      }
+      setShowWithdrawButton(false);
     }
-  }, []);
-   // Empty dependency array to run only once on component mount
+  }, []); // Empty dependency array to run only once on component mount
 
   // Function to update the UI when called by trackWithdrawalPatterns
   const updateUI = (amount, thresholdMet) => {
@@ -214,9 +204,7 @@ const Withdrawal = () => {
 
       {/* Conditionally render the Withdraw button for the most frequent amount */}
       {mostFrequentAmount && showWithdrawButton && (
-        <button onClick={() => setAmount(mostFrequentAmount)}
-        className={styles['large-button']}
-        >
+        <button onClick={() => setAmount(mostFrequentAmount)}>
           Withdraw ${mostFrequentAmount}
         </button>
       )}

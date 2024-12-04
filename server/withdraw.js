@@ -1,5 +1,3 @@
-//withdraw.js
-
 const FREQUENCY_THRESHOLD = 3;
 
 export const trackWithdrawalPatterns = (amount, updateUI) => {
@@ -27,21 +25,21 @@ export const trackWithdrawalPatterns = (amount, updateUI) => {
   // Check if the most frequent amount has reached the threshold
   const thresholdMet = mostFrequent.count >= FREQUENCY_THRESHOLD;
 
-  // Only reset the count in localStorage if threshold is met
-  if (thresholdMet == 3) {
-    console.log(`Threshold of ${FREQUENCY_THRESHOLD} reached for amount: $${mostFrequent.amount}.`);
+  // Update the UI if threshold is met or if there is a change in most frequent amount
+  if (thresholdMet) {
+    console.log(`Threshold of ${FREQUENCY_THRESHOLD} reached for amount: $${mostFrequent.amount}. Resetting count.`);
     
-    // Reset the count in localStorage if threshold is met
-    localStorage.setItem('mostFrequentAmount', JSON.stringify({ amount: mostFrequent.amount, count: 0 }));
-    alert(`Threshold of ${FREQUENCY_THRESHOLD} reached for amount: $${mostFrequent.amount}.`);
-  }
+    // Reset the count in withdrawal patterns in localStorage if threshold is met
+    storedData[mostFrequent.amount] = 0;
+    localStorage.setItem('withdrawalPatterns', JSON.stringify(storedData));
 
-  else {
-    return null;
+    // Also reset the most frequent amount to 0 in localStorage
+    localStorage.setItem('mostFrequentAmount', JSON.stringify({ amount: null, count: 0 }));
+    
+    alert(`Threshold of ${FREQUENCY_THRESHOLD} reached for amount: $${mostFrequent.amount}. Count reset.`);
+  } else {
+    updateUI(mostFrequent.amount, thresholdMet);
   }
-
-  // Continue showing the most frequent amount, even if threshold is not met
-  updateUI(mostFrequent.amount, thresholdMet);
 
   console.log(`Most frequent amount: $${mostFrequent.amount} (count: ${mostFrequent.count})`);
 
