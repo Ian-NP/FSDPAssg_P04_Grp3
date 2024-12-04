@@ -70,7 +70,7 @@ const cancelListening = () => {
 const handleCommand = (action, amount) => {
     if (action === "Withdraw Funds") {
       console.log(`Navigate to withdrawal page with amount: ${amount}`);
-      navigate("/AccountSelection", { state: { amountToWithdraw: amount } });
+      navigate("/withdrawal", { state: { amountToWithdraw: amount } });
     } else if (action === "Check Balance") {
       console.log("Navigate to balance enquiry page.");
       navigate("/balanceEnquiry");
