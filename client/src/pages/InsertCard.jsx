@@ -1,10 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from "../styles/InsertCard.module.css";
 import Lottie from 'lottie-react';
 import InsertCardAnimation from '../assets/InsertCardAnimation.json';
+import facialRecognitionAnimation from "../assets/facialRecognitionAnimation.json";
+import recognisingFaceAnimation from "../assets/recognisingFaceAnimation.json";
 import OCBClogo from '../assets/OCBClogo.png';
 import { ATMProvider, useATM } from '../contexts/AtmContext';
+import * as faceapi from 'face-api.js';  // Import face-api.js
 
 
 const NoteOrb = ({ denomination }) => {
@@ -47,25 +50,102 @@ const InsertCard = () => {
   const navigate = useNavigate();
   const { cashLevels } = useATM();
 
+  // Modal reference
+  const dialogRef = useRef(null);
+  const videoRef = useRef(null); // Reference for the video element
+  const canvasRef = useRef(null); // Reference for the canvas where face-api.js will draw detections
+  const [isAuthenticated, setIsAuthenticated] = useState(false); // State for authentication status
+
   // useEffect to set up event listener for "Enter" key press
   useEffect(() => {
+    // Load the face-api.js models
+    const loadModels = async () => {
+      const MODEL_URL = "/models"; // Place models in the public/models directory
+      await faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL);
+      await faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL);
+      await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL);
+    };
+
+    loadModels();
+
     const handleKeyPress = (event) => {
       if (event.key === "Enter") {
         handleCardInsert();
       }
     };
 
+    const handleClickOutside = (event) => {
+      // Check if click is outside the modal content area
+      if (event.target.className === dialogRef.current.className) {
+        closeModal(); // Close modal if clicked outside
+      }
+      console.log("working");
+    };
+
     document.addEventListener("keydown", handleKeyPress);
+    document.addEventListener("click", handleClickOutside);
 
     // Cleanup event listener when component unmounts
     return () => {
       document.removeEventListener("keydown", handleKeyPress);
+      document.removeEventListener("click", handleClickOutside);
     };
   }, []); // Empty dependency array ensures this runs once when the component mounts
 
   const handleCardInsert = () => {
     // Simulate card insertion logic here
     navigate("/enter-pin");
+  };
+  
+  const openModal = () => {
+    dialogRef.current.showModal(); // Open modal
+    startFacialRecognition();
+  };
+
+  const startFacialRecognition = () => {
+    const streamVideo = async () => {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      videoRef.current.srcObject = stream;
+  
+      videoRef.current.addEventListener("play", () => {
+        if (canvasRef.current && videoRef.current) {
+          const canvas = faceapi.createCanvasFromMedia(videoRef.current);
+          canvasRef.current.appendChild(canvas); // Append canvas once video starts
+          const displaySize = { width: videoRef.current.width, height: videoRef.current.height };
+          faceapi.matchDimensions(canvas, displaySize);
+  
+          setInterval(async () => {
+            const detections = await faceapi
+              .detectAllFaces(videoRef.current)
+              .withFaceLandmarks()
+              .withFaceDescriptors();
+  
+            if (detections.length === 1) {
+              const faceDescriptor = detections[0].descriptor;
+              // Compare with stored face descriptor (You will need to fetch this from the backend)
+              const distance = faceapi.euclideanDistance(faceDescriptor, storedFaceDescriptor);
+              if (distance < 0.6) {
+                setIsAuthenticated(true); // Successfully authenticated
+                console.log("Face matched!");
+              } else {
+                console.log("Face did not match.");
+                setIsAuthenticated(false);
+              }
+            } else if (detections.length > 1) {
+              console.log("Multiple faces detected! Failing authentication.");
+              setIsAuthenticated(false);
+            }
+          }, 100); // Adjust interval for smoother checks
+        }
+      });
+    };
+  
+    streamVideo();
+  };
+
+  const closeModal = () => {
+    dialogRef.current.close(); // Close modal
+    setIsAuthenticated(false); // Reset authentication status
   };
 
   // Convert cashLevels to integers for accurate calculations
@@ -78,14 +158,29 @@ const InsertCard = () => {
         <img src={OCBClogo} width={200} alt="OCBC logo" />
       </div>
 
-      {/* Lottie animation */}
-      <Lottie 
-        animationData={InsertCardAnimation}
-        style={{ width: 450, height: 450 }}
-        speed={0.5} // Set speed to 50%
-        loop={true}
-      />
-      <p>Please insert your card</p>
+      <div className={styles.authenticationMethods}>
+        <div className={styles.cardMethod} onClick={handleCardInsert}>
+          {/* Lottie animation */}
+          <Lottie 
+            animationData={InsertCardAnimation}
+            style={{ width: 350, height: 350, clipPath: 'inset(10% 10% 10% 10%)', transformOrigin: 'center center', transform: 'scale(1.2)' }}
+            speed={0.5} // Set speed to 50%
+            loop={true}
+          />
+          <p>Option 1: <br></br>Please insert your card</p>
+        </div>
+        {/* <div className={styles.verticalLine}></div> */}
+        <div className={styles.facialMethod} onClick={openModal}>
+          {/* Lottie animation */}
+          <Lottie 
+            animationData={facialRecognitionAnimation}
+            style={{ width: 350, height: 350, clipPath: 'inset(30% 30% 30% 30%)', transformOrigin: 'center center', transform: 'scale(1.4)' }}
+            speed={0.5} // Set speed to 50%
+            loop={true}
+          />
+          <p>Option 2: <br></br>Access via Facial Recognition</p>
+        </div>
+      </div>
 
       <button className={styles.scanQRCodeButton} onClick={() => navigate('/QRCodeScanner')}>
         Scan QR Code
@@ -101,6 +196,21 @@ const InsertCard = () => {
         </div>
       </div>
 
+      {/* Modal using <dialog> */}
+      <dialog ref={dialogRef} className={styles.dialogModal}>
+        {/* Video feed positioned at the top-right corner */}
+        <video ref={videoRef} width="300" height="300" autoPlay muted className={styles.videoFeed} />
+
+        {/* Modal content */}
+        <div className={styles.modalContent}>
+          <Lottie
+            animationData={recognisingFaceAnimation}
+            style={{ width: 200, height: 200 }}
+            loop={true}
+          />
+          <p className={styles.modalText}>Scanning your face for authentication...</p>
+        </div>
+      </dialog>
     </div>
   );
 };

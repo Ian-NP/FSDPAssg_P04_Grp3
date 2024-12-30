@@ -87,6 +87,36 @@ class Account {
         }
     }
 
+    static async getAccountsByUserId(userId) {
+        try {
+            console.log("Searching for userId:", userId); // Log the userId being searched
+            
+            // Query to get all accounts with the specified userId
+            const accountQuery = query(ref(database, 'account'), orderByChild('userId'), equalTo(userId));
+            const snapshot = await get(accountQuery);
+            
+            if (snapshot.exists()) {
+                const accountData = snapshot.val();
+                console.log("Account data found:", accountData); // Log the found account data
+                
+                // Extract all account keys (account IDs)
+                const accounts = Object.keys(accountData).map(accountId => ({
+                    id: accountId,
+                    ...accountData[accountId]
+                }));
+    
+                return accounts; // Return an array of accounts
+            } else {
+                console.error("No accounts found for userId:", userId);
+                throw new Error("No accounts found for the specified userId");
+            }
+        } catch (error) {
+            console.log(error);
+            console.error("Error retrieving accounts:", error.message);
+            throw new Error("Error retrieving accounts");
+        }
+    }    
+
     static async getAccountByAccountNum(accountNum) {
         try {
             console.log("Searching for account number:", accountNum); // Log the account number being searched
@@ -213,6 +243,40 @@ class Account {
             throw new Error("Error deleting account");
         }
     }
+
+    static async getAccountsByUserId (userId) {
+        console.log(`Searching for accounts with userId: "${userId}"`); // Log the search
+    
+        try {
+            const snapshot = await get(ref(database, 'account')); // Query the correct path in the database
+    
+            if (!snapshot.exists()) {
+                throw new Error("No accounts found"); // Handle case where no accounts exist
+            }
+    
+            const accounts = []; // Array to store accounts that match the userId
+    
+            snapshot.forEach((childSnapshot) => {
+                const data = childSnapshot.val();
+                console.log(`Checking account: ${data.userId}`); // Log each account for debugging
+    
+                // If the userId matches, push the account data into the accounts array
+                if (data.userId == userId) {
+                    accounts.push({ id: childSnapshot.key, ...data });
+                }
+            });
+    
+            if (accounts.length === 0) {
+                throw new Error("No accounts found for the provided userId"); // Handle no matching accounts
+            }
+    
+            return accounts; // Return the found accounts
+    
+        } catch (error) {
+            console.error("Error fetching accounts:", error.message);
+            throw error; // Rethrow error for proper handling
+        }
+    };
 }
 
 module.exports = Account;

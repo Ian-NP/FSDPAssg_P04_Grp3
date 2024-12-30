@@ -11,9 +11,11 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.26.0",
+    "@tensorflow/tfjs-core": "^4.22.0",
     "axios": "^1.7.7",
     "chart.js": "^4.4.6",
     "chartjs-plugin-datalabels": "^2.2.0",
+    "face-api.js": "^0.20.0",
     "firebase": "^11.0.1",
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.2",
@@ -27,6 +29,7 @@
     "react-router-dom": "^6.27.0",
     "react-speech-recognition": "^3.10.0",
     "regenerator-runtime": "^0.14.1",
+    "tfjs-image-recognition-base": "^0.6.0",
     "vite-plugin-node-polyfills": "^0.22.0"
   },
   "devDependencies": {

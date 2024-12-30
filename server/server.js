@@ -35,11 +35,13 @@ app.use("/api/transactions", transactionRoutes);
 // Account routes
 app.get("/api/accounts", accountController.getAllAccounts);
 app.get("/api/accounts/firebaseid/:id", accountController.getAccountById);
+app.get("/api/accounts/userId/:userId", accountController.getAccountsByUserId);
 app.get("/api/accounts/:accountNum", accountController.getAccountByAccountNum);
 app.post("/api/accounts/login", accountController.loginAccount);
 app.post("/api/accounts/create", accountController.createAccount);
 app.put("/api/accounts/updateBalance/:accountNum", accountController.updateBalance);
 app.delete("/api/accounts/remove/:id", accountController.deleteAccount);
+app.post("/api/accounts/registerFace", accountController.registerFaceId);
 
 // ATM routes
 app.get("/api/atm/:atmId", ATMController.getATMDetails);
