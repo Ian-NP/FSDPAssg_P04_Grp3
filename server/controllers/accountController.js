@@ -282,37 +282,6 @@ const updateAccountInDatabase = async (account) => {
     });
 };
 
-const registerFaceId = async (req, res) => {
-    const { userId, faceDescriptor } = req.body;
-
-    console.log('Received request body:', req.body); // Log the request body for debugging
-
-    try {
-        // Step 1: Fetch all accounts associated with the userId
-        const accounts = await Account.getAccountsByUserId(userId); // Assuming you have this function for fetching accounts by userId
-
-        if (!accounts || accounts.length === 0) {
-            return res.status(404).json({ message: "No accounts found for the given userId." });
-        }
-
-        // Step 2: Update each account with the new faceDescriptor
-        const updates = accounts.map(account => {
-            return update(ref(database, `account/${account.id}`), {
-                faceDescriptor: faceDescriptor, // Update the face descriptor for each account
-            });
-        });
-
-        // Wait for all updates to complete
-        await Promise.all(updates);
-
-        // Step 3: Return a success response
-        return res.status(200).json({ message: "Face registered successfully for the userId." });
-    } catch (error) {
-        console.error("Error registering face:", error);
-        return res.status(500).json({ message: "Error registering face." });
-    }
-};
-
 
 module.exports = {
     getAllAccounts,
@@ -324,5 +293,4 @@ module.exports = {
     updateBalance,
     deleteAccount,
     freezeAccount,
-    registerFaceId,
 };

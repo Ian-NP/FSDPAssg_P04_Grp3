@@ -12,6 +12,7 @@ const transactionsController = require('./controllers/transactionsController');
 const ATMController = require('./controllers/atmController');
 const analyzeSpendingAndAdvice = require('./SpendingHabitsAnalysis');
 const { getActionCommand } = require('./voiceCommandGeneration');
+const faceDescriptorsController = require('./controllers/faceDescriptorController');
 
 const app = express();
 
@@ -41,13 +42,18 @@ app.post("/api/accounts/login", accountController.loginAccount);
 app.post("/api/accounts/create", accountController.createAccount);
 app.put("/api/accounts/updateBalance/:accountNum", accountController.updateBalance);
 app.delete("/api/accounts/remove/:id", accountController.deleteAccount);
-app.post("/api/accounts/registerFace", accountController.registerFaceId);
 
 // ATM routes
 app.get("/api/atm/:atmId", ATMController.getATMDetails);
 app.put("/api/atm/:atmId", ATMController.updateATMNotes);
 app.post("/api/atm/create", ATMController.createATM);
 app.get("/api/atm/:atmId/nearestAtm", ATMController.getNearestOCBCATM);
+
+
+// FaceDescriptors Routes
+app.get("/api/getFaceDescriptors", faceDescriptorsController.getAllFaceIDsController);
+app.post("/api/registerFace", faceDescriptorsController.createFaceIDController);
+app.put("/api/updateFaceDescriptor/:faceId", faceDescriptorsController.updateFaceIDController);
 
 // Function to get the local IP address
 const getLocalIpAddress = () => {

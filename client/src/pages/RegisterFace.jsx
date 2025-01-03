@@ -1,23 +1,23 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as faceapi from 'face-api.js';
-import styles from "../styles/RegisterFace.module.css"; // Updated CSS file for better styling
+import styles from "../styles/RegisterFace.module.css";
 import axios from 'axios';
 
 const RegisterFace = () => {
-  const videoRef = useRef(null); // Ref for video element
-  const canvasRef = useRef(null); // Ref for canvas to display face-api.js detections
-  const [userId, setUserId] = useState(""); // State for user ID input
-  const [isRegistered, setIsRegistered] = useState(false); // State to show if the user has been registered
-  
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
+  const [isRegistered, setIsRegistered] = useState(false);
+  const [multipleFaceDetected, setMultipleFaceDetected] = useState(false);
+
   // Load face-api.js models
   useEffect(() => {
     const loadModels = async () => {
-      const MODEL_URL = "/models"; // Place models in the public/models directory
+      const MODEL_URL = "/models";
       await faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL);
       await faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL);
       await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL);
     };
-    
+
     loadModels();
   }, []);
 
@@ -39,60 +39,47 @@ const RegisterFace = () => {
           .withFaceDescriptors();
 
         if (detections.length === 1) {
-          const faceDescriptor = detections[0].descriptor;
-
-          // Clear previous drawings from canvas using getContext('2d')
           const canvasContext = canvas.getContext('2d');
-          canvasContext.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
+          canvasContext.clearRect(0, 0, canvas.width, canvas.height);
 
-          // Draw the detections
           faceapi.draw.drawDetections(canvas, detections);
           faceapi.draw.drawFaceLandmarks(canvas, detections);
         }
-      }, 100); // Adjust interval for smoother checks
+      }, 100);
     });
   };
 
   const handleRegisterFace = async () => {
-    if (!userId.trim()) {
-        alert("Please enter a valid User ID");
-        return;
-    }
-
     const detections = await faceapi
-        .detectAllFaces(videoRef.current)
-        .withFaceLandmarks()
-        .withFaceDescriptors();
-
+      .detectAllFaces(videoRef.current)
+      .withFaceLandmarks()
+      .withFaceDescriptors();
+  
     if (detections.length === 1) {
-        const faceDescriptor = detections[0].descriptor;
-
-        // Convert faceDescriptor array into a storable format (array of floats)
-        const faceDescriptorData = faceDescriptor.map((val) => val.toFixed(6)); // Ensure it’s a number with a fixed number of decimals
-
-        console.log("Sending request with data:", { userId, faceDescriptor: faceDescriptorData });
-
-        // Send face descriptor to backend (Node.js server)
-        try {
-            const response = await axios.post('http://localhost:3000/api/accounts/registerFace', {
-                userId,
-                faceDescriptor: faceDescriptorData,
-            });
-            setIsRegistered(true);
-            alert(response.data.message); // Alert based on backend response
-        } catch (error) {
-            console.error("Error registering face:", error);
-            alert("Error registering face.");
-        }
-
-        console.log("Face Descriptor:", faceDescriptorData); // For debugging
+      const faceDescriptor = detections[0].descriptor;
+      const faceDescriptorData = Array.from(faceDescriptor).map((val) => val.toFixed(6)); // Ensure it's an array
+  
+      console.log("Sending request with data:", { faceDescriptor: faceDescriptorData });
+  
+      try {
+        const response = await axios.post('http://localhost:3000/api/registerFace', {
+          faceDescriptor: faceDescriptorData, // Send as an array
+        });
+        setIsRegistered(true);
+        alert(response.data.message);
+      } catch (error) {
+        console.error("Error registering face:", error);
+        alert("Error registering face.");
+      }
+  
+      console.log("Face Descriptor:", faceDescriptorData);
+    } else if (detections.length > 1) {
+      setMultipleFaceDetected(true);
     } else {
-        alert("No face detected. Please try again.");
+      alert("No face detected. Please try again.");
     }
-};
+  }; 
 
-
-  // Start video when component mounts
   useEffect(() => {
     startVideo();
   }, []);
@@ -101,25 +88,17 @@ const RegisterFace = () => {
     <div className={styles.registerFaceContainer}>
       <h1 className={styles.title}>Register Your Face</h1>
 
-      <div className={styles.inputContainer}>
-        <label htmlFor="userId" className={styles.label}>Enter Your User ID</label>
-        <input
-          id="userId"
-          type="text"
-          value={userId}
-          onChange={(e) => setUserId(e.target.value)}
-          placeholder="Enter a unique user ID"
-          className={styles.input}
-        />
-      </div>
-
       <div className={styles.videoContainer}>
         <video ref={videoRef} width="640" height="480" autoPlay muted className={styles.video} />
         <canvas ref={canvasRef} className={styles.canvas} />
       </div>
 
-      <button onClick={handleRegisterFace} className={styles.registerButton}>
-        Register Face
+      <button
+        onClick={handleRegisterFace}
+        className={`${styles.registerButton} ${multipleFaceDetected ? styles.disabledButton : ''}`}
+        disabled={multipleFaceDetected}
+      >
+        {multipleFaceDetected ? "Multiple Faces Detected" : "Register Face"}
       </button>
 
       {isRegistered && <p className={styles.successMessage}>Face registered successfully!</p>}
