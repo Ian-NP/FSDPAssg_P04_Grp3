@@ -4,6 +4,7 @@ import { Routes, Route } from 'react-router-dom';
 import { AccountProvider } from './contexts/AccountContext'; // Import AccountProvider
 import InsertCard from './pages/InsertCard';
 import RegisterFace from './pages/RegisterFace';
+import SelectFaceAccount from './pages/SelectFaceAccount';
 import EnterPin from './pages/EnterPin';
 import GlobalStatusMonitor from './components/GlobalStatusMonitor'; // Import the GlobalStatusMonitor
 import MainMenu from './pages/MainMenu';
@@ -42,6 +43,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<InsertCard />} />
         <Route path="/registerFace" element={<RegisterFace />} />
+        <Route path="/selectFaceAccount" element={<SelectFaceAccount />} />
         <Route path="/enter-pin" element={<EnterPin />} />
         <Route path="/landingPage" element={<LandingPage />} />
         <Route path="/mainMenu" element={<MainMenu />} />

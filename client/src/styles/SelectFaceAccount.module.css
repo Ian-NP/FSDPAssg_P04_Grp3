@@ -1,0 +1,59 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100%;
+    position: fixed;
+  }
+  
+  h1 {
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .accountList {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    width: 100%;
+    max-width: 800px; /* Limit the width of the grid for better centering */
+  }
+  
+  .accountCard {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    cursor: pointer;
+    text-align: center;
+  }
+  
+  .accountCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+  }
+  
+  .accountNumber {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #E11A27; /* Highlight the account number */
+    margin-bottom: 10px;
+  }
+  
+  .accountName {
+    font-size: 1.5em;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  .accountType {
+    font-size: 1em;
+    color: #555;
+  }
+  
+  p strong {
+    color: #333;
+  }
+  

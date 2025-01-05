@@ -5,9 +5,12 @@ import Lottie from 'lottie-react';
 import InsertCardAnimation from '../assets/InsertCardAnimation.json';
 import facialRecognitionAnimation from "../assets/facialRecognitionAnimation.json";
 import recognisingFaceAnimation from "../assets/recognisingFaceAnimation.json";
+import facialAuthSuccessAnimation from "../assets/facialAuthSuccessAnimation.json";
+import shoulderSurfing from "../assets/shoulderSurfing.png";
+import facialAuthUnsuccessfulAnimation from "../assets/facialAuthUnsuccessfulAnimation.json";
 import OCBClogo from '../assets/OCBClogo.png';
 import { ATMProvider, useATM } from '../contexts/AtmContext';
-import * as faceapi from 'face-api.js';  // Import face-api.js
+import * as faceapi from 'face-api.js';
 import axios from 'axios';
 
 const NoteOrb = ({ denomination }) => {
@@ -48,6 +51,9 @@ const InsertCard = () => {
   const canvasRef = useRef(null); 
 
   const [stream, setStream] = useState(null); // Track video stream
+  const [matchedFace, setMatchedFace] = useState(null); // null means scanning, false means failed, true means success
+  const [authenticatingFace, setAuthenticatingFace] = useState(false);
+  const [multipleFacesDetected, setMultipleFacesDetected] = useState(false);
 
   useLayoutEffect(() => {
     const loadModels = async () => {
@@ -97,7 +103,7 @@ const InsertCard = () => {
   };
 
   const handleSuccessfulFaceMatch = () => {
-    navigate("/accountMenu");
+    navigate("/selectFaceAccount");
   };
 
   const openModal = () => {
@@ -105,8 +111,8 @@ const InsertCard = () => {
     startFacialRecognition();
   };
 
+  
   const startFacialRecognition = () => {
-    let requestSent = false;
     let detectionInterval = null; // Store the interval reference to clear it when done
     let stream = null; // Store the video stream to stop it later
   
@@ -131,9 +137,11 @@ const InsertCard = () => {
   
               if (detections.length === 1) {
                 console.log("Face detected!");
+                setMultipleFacesDetected(false);
+                setAuthenticatingFace(true);
                 const faceDescriptor = detections[0].descriptor;
   
-                if (!requestSent) {
+                if (!authenticatingFace) {
                   try {
                     const response = await axios.get('http://localhost:3000/api/getFaceDescriptors');
                     const storedFaceIds = response.data.faceIds;
@@ -146,27 +154,31 @@ const InsertCard = () => {
                     });
   
                     if (matchedFaceId) {
-                      console.log("Face matched!");
+                      setMatchedFace(true);
                       const response = await axios.get(`http://localhost:3000/api/accounts/userId/${matchedFaceId}`);
                       const accounts = response.data.accounts;
                       localStorage.setItem('accounts', JSON.stringify(accounts));
                       handleSuccessfulFaceMatch();
-                      
                       // Stop the camera after successful face recognition
                       stopCamera();
                     } else {
                       console.log("Face did not match.");
+                      setAuthenticatingFace(false);
+                      setTimeout(() => {
+                        setMatchedFace(false);
+                        stopCamera();
+                      }, 2000);
                     }
-  
-                    requestSent = true;
                   } catch (error) {
                     console.error("Error fetching stored face IDs:", error);
-                    requestSent = true;
+                    setAuthenticatingFace(false);
                   }
                 }
               } else if (detections.length > 1) {
                 console.log("Multiple faces detected! Failing authentication.");
-                requestSent = true;
+                setAuthenticatingFace(true);
+                setMultipleFacesDetected(true);
+                stopCamera();
               }
             }
           }, 100);
@@ -189,7 +201,19 @@ const InsertCard = () => {
 
   const closeModal = () => {
     dialogRef.current.close();
+    // Cleanup face-api.js and video stream when the component unmounts
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop()); // Stop the video stream
+    }
+    clearInterval(detectionInterval); // Clear face detection interval
   };
+
+  const handleRetry = () => {
+    setMatchedFace(null);
+    setAuthenticatingFace(false);
+    setMultipleFacesDetected(false);
+    startFacialRecognition();
+  }
 
   return (
     <div className={styles.insertCardContainer}>
@@ -234,12 +258,47 @@ const InsertCard = () => {
       <dialog ref={dialogRef} className={styles.dialogModal}>
         <video ref={videoRef} width="300" height="300" autoPlay muted className={styles.videoFeed} />
         <div className={styles.modalContent}>
-          <Lottie
-            animationData={recognisingFaceAnimation}
-            style={{ width: 200, height: 200 }}
-            loop={true}
-          />
-          <p className={styles.modalText}>Scanning your face for authentication...</p>
+        {matchedFace === null && multipleFacesDetected === false && (
+          <>
+            <Lottie
+              animationData={recognisingFaceAnimation}
+              style={{ width: 200, height: 200 }}
+              loop={true}
+            />
+            <p className={styles.modalText}>Scanning your face for authentication...</p>
+          </>
+        )}
+
+        {matchedFace === false && multipleFacesDetected === false && (
+          <>
+            <Lottie
+              animationData={facialAuthUnsuccessfulAnimation}
+              style={{ width: 200, height: 200 }}
+              loop={true}
+            />
+            <p className={styles.modalText}>Face recognition failed. Please try again.</p>
+            <button className={styles.button19} onClick={handleRetry}>Retry Facial Authentication</button>
+          </>
+        )}
+
+        {matchedFace === true && multipleFacesDetected === false && (
+          <>
+            <Lottie
+              animationData={facialAuthSuccessAnimation}
+              style={{ width: 200, height: 200 }}
+              loop={true}
+            />
+            <p className={styles.modalText}>Face authentication successful!</p>
+          </>
+        )}
+
+        {multipleFacesDetected === true && matchedFace !== true && (
+          <>
+            <img src={shoulderSurfing} alt="Shoulder surfing" height={200} />
+            <p className={styles.modalText}>Multiple faces detected. Potential Shoulder Surfing.</p>
+            <button className={styles.button19} onClick={handleRetry}>Retry Facial Authentication</button>
+          </>
+        )}
         </div>
         <div ref={canvasRef} />
       </dialog>
