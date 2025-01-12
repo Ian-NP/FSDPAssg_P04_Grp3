@@ -2,6 +2,7 @@ const Account = require('../models/account');
 const { sendEmailReceipt } = require('../emailService'); 
 const { ref, get, set, update, remove } = require("firebase/database");
 const { database } = require('../firebase.js');
+const { checkForFraud } = require('../service/fraudLabsPro');
 
 // THIS CLASS IS ONLY NEEDED FOR ME (IAN)
 class Transaction {
@@ -71,6 +72,12 @@ const createTransaction = async (req, res) => {
             ...transaction,
             id: customKey // Store the ID as part of the transaction data
         });
+
+        const fraudDetected = await checkForFraud(transaction);
+
+        if (fraudDetected) {
+            return res.status(400).send({ success: false, message: 'Fraudulent activity detected. Transaction blocked.' });
+        }
 
         const accountDetails = await Account.getAccountByAccountNum(accountNum);
         if (!accountDetails) {

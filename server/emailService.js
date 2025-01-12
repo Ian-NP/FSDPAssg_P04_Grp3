@@ -146,7 +146,28 @@ const sendActiveSessionAlert = async (userName, userEmail, accountNum) => {
     }
 };
 
-
+async function sendSuspiciousTransactionEmail(userEmail, amount, fraudScore) {
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: 'your_email@example.com', // The email address where you want to receive alerts
+      subject: 'Suspicious Transaction Detected',
+      text: `A suspicious transaction has been detected.
+  
+      Transaction Details:
+      - User Email: ${userEmail}
+      - Amount: $${amount}
+      - Fraud Score: ${fraudScore}
+  
+      Please review this transaction immediately.`,
+    };
+  
+    try {
+      const info = await transporter.sendMail(mailOptions);
+      console.log('Suspicious transaction email sent: ' + info.response);
+    } catch (error) {
+      console.error('Error sending suspicious transaction email:', error);
+    }
+  }
 
 
 module.exports = { sendEmailReceipt, sendActiveSessionAlert };

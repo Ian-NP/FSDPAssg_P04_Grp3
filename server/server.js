@@ -13,6 +13,7 @@ const ATMController = require('./controllers/atmController');
 const analyzeSpendingAndAdvice = require('./SpendingHabitsAnalysis');
 const { getActionCommand } = require('./voiceCommandGeneration');
 const faceDescriptorsController = require('./controllers/faceDescriptorController');
+const { checkForFraud } = require('./service/fraudLabsPro'); 
 
 const app = express();
 
@@ -125,3 +126,4 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
+
